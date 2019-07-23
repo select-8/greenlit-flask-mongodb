@@ -1,0 +1,12 @@
+{% block content %}
+
+<h3>Projects</h3>
+{% for user in users %}
+<ul>
+    <li>{{ user.username }}</li>
+</ul>
+<hr>
+{% endfor %}
+
+
+{% endblock %}
