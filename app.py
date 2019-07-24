@@ -31,28 +31,30 @@ def show_user():
 def add_pitch():
     _genres = mongo.db.genres.find()
     genre_list = [genre for genre in _genres]
-    # _directors = mongo.db.directors.find()
-    # director_list = [direct for directors in _directors]
-    # _actors = mongo.db.talent.find()
-    # actor_list = [act for actors in _actors]
-    # return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list)
-    return render_template('add_pitch.html', genres = genre_list)
+    _directors = mongo.db.directors.find()
+    director_list = [directors for directors in _directors]
+    _actors = mongo.db.talent.find()
+    actor_list = [actors for actors in _actors]
+    return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list)
 
-
-@app.route('/show_pitches')
-def show_pitches():
-    return render_template("show_pitches.html", pitches=mongo.db.pitches.find())
-
+@app.route('/user_pitch', methods=['POST'])
+def user_pitch():
+    pitch = mongo.db.pitches
+    pitch.insert_one(request.form.to_dict())
+    return redirect(url_for('add_pitch'))
 
 @app.route('/add_pitch/<username>/<title>/<desc>/<director>/<actor>')
 def insert_pitch(username, title, desc, director, actor):
     user = mongo.db.users
     the_user = user.find_one({'username' : username})
-
     the_pitch = mongo.db.pitches
     the_pitch.insert({'username': the_user['username'], 'title': title, 'description': desc, 'director': director, 'actor': actor})
-
     return redirect(url_for('show_pitches'))
+
+
+@app.route('/show_pitches')
+def show_pitches():
+    return render_template("show_pitches.html", pitches=mongo.db.pitches.find())
 
 
 if __name__ == '__main__':

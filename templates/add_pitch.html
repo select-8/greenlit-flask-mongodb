@@ -1,14 +1,44 @@
+{% extends 'base.html' %}
 {% block content %}
 
-<h3>Add Pitch</h3>
-<div class="dropdown">
-    <button class="dropbtn">Genres</button>
-    <div class="dropdown-content" id="genre" name="genre_name">
-        {% for genre in genres %}
-        <p value="{{genre.genre_name}}">{{genre.genre_name}}</p>
-        {% endfor %}
-    </div>
-</div>
+<h3>Add Your Pitch</h3>
+<form action="{{ url_for('user_pitch') }}" method="POST"">
 
+    <div class=" input-field" style="width:200px;">
+    <select id="genre" name="genre_name">
+        <option value="" disabled selected>Choose Genre</option>
+        {% for genre in genres %}
+        <option value="{{genre.genre_name}}">{{genre.genre_name}}</option>
+        {% endfor %}
+    </select>
+    </div>
+    <br>
+    <div class="input-field" style="width:200px;">
+        <select id="director" name="director_name">
+            <option value="" disabled selected>Choose Director</option>
+            {% for director in directors %}
+            <option value="{{director.director}}">{{director.director}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br>
+    <div class="input-field" style="width:200px;">
+        <select id="actor" name="actor">
+            <option value="" disabled selected>Choose Actor</option>
+            {% for actor in actors %}
+            <option value="{{actor.actor}}">{{actor.actor}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br>
+    <div class="input-field input-desc">
+        <textarea id="description" name="discription"></textarea>
+    </div>
+    <br>
+    <div class="row">
+        <button type="submit" action="{{ url_for('user_pitch') }}">Add Your Pitch
+        </button>
+    </div>
+</form>
 
 {% endblock %}
