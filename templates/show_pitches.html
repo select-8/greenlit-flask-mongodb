@@ -1,0 +1,16 @@
+{% block content %}
+
+<h3>Pitches</h3>
+{% for pitch in pitches %}
+<ul>
+    <li>User: {{ pitch.username }}</li>
+    <li>Title: {{ pitch.title }}</li>
+    <li>Plot: {{ pitch.description }}</li>
+    <li>Director: {{ pitch.director }}</li>
+    <li>Lead: {{ pitch.actor }}</li>
+</ul>
+<hr>
+{% endfor %}
+
+
+{% endblock %}
