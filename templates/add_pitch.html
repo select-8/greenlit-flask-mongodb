@@ -1,0 +1,14 @@
+{% block content %}
+
+<h3>Add Pitch</h3>
+<div class="dropdown">
+    <button class="dropbtn">Genres</button>
+    <div class="dropdown-content" id="genre" name="genre_name">
+        {% for genre in genres %}
+        <p value="{{genre.genre_name}}">{{genre.genre_name}}</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
