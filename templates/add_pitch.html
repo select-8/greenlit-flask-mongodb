@@ -3,21 +3,19 @@
 
 <h3>Add Your Pitch</h3>
 <form action="{{ url_for('user_pitch') }}" method="POST"">
-
-    <p>Welcome {{ session['username'] }}</p>
-
-    <div class="input-field input-title">
-        <label>Give your film a title</label>
-            <textarea id="title" name="title"></textarea>
-        </div>
-        <br>
+    <p>Welcome {{ session['username']|title }}</p>
+    <div class=" input-field input-title">
+    <label>Give your film a title</label>
+    <textarea id="title" name="title"></textarea>
+    </div>
+    <br>
     <div class=" input-field" style="width:200px;">
-    <select id="genre" name="genre_name">
-        <option value="" disabled selected>Choose Genre</option>
-        {% for genre in genres %}
-        <option value="{{genre.genre_name}}">{{genre.genre_name}}</option>
-        {% endfor %}
-    </select>
+        <select id="genre" name="genre_name">
+            <option value="" disabled selected>Choose Genre</option>
+            {% for genre in genres %}
+            <option value="{{genre.genre_name}}">{{genre.genre_name}}</option>
+            {% endfor %}
+        </select>
     </div>
     <br>
     <div class="input-field" style="width:200px;">
@@ -40,7 +38,7 @@
     <br>
     <div class="input-field input-desc">
         <label>Describe your film in 30 characters</label>
-        <textarea id="description" name="discription"></textarea>
+        <textarea maxlength="50" id="description" name="discription" cols="30" rows="5" placeholder="50 Characters Pitches"></textarea>
     </div>
     <br>
     <div class="row">
@@ -49,8 +47,8 @@
     </div>
     <br>
     <div class="row">
-            <button><a href="{{ url_for('show_pitches') }}">View Your Pitches</a></button>
-        </div>
+        <button><a href="{{ url_for('show_pitches') }}">View Your Pitches</a></button>
+    </div>
 </form>
 
 {% endblock %}

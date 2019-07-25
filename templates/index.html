@@ -4,7 +4,7 @@
 <h2>GREENLIT PRODUCTIONS</h2>
 
 {% if session['username'] %}
-<h3>Welcome to our site {{ session['username'] }}</h3>
+<h3>Welcome to our site {{ session['username']|title }}</h3>
 <div class="row">
     <button><a href="{{ url_for('show_pitches') }}">click here to view your pitches</a></button>
 </div>

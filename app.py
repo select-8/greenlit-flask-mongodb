@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, redirect, request, session, url_for
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from datetime import date, datetime
 import bcrypt
 
 app = Flask(__name__)
@@ -14,8 +15,6 @@ mongo = PyMongo(app)
 
 @app.route('/')
 def index():
-    # if 'username' in session:
-    #     return render_template('index.html')
     return render_template('index.html')
 
 
@@ -47,14 +46,6 @@ def register():
         return 'That username already exists!'
     return render_template('register.html')
 
-@app.route('/add_user')
-def add_user():
-    user_collection = mongo.db.users
-    user_collection.insert({"username":"Barry Barington"})
-    user_collection.insert({"username":"Mary Maryington"})
-    user_collection.insert({"username":"Johnny Johns"})
-    return redirect(url_for('show_user'))
-
 """
 should show session user and list of pitches with option to edit
 and maybe to add a profile?
@@ -62,6 +53,7 @@ and maybe to add a profile?
 @app.route('/show_user')
 def show_user():
     return render_template("show_users.html", users=mongo.db.users.find())
+
 
 @app.route('/add_pitch')
 def add_pitch():
@@ -73,34 +65,34 @@ def add_pitch():
     actor_list = [actors for actors in _actors]
     return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list)
 
-''''''
+
 @app.route('/user_pitch', methods=['POST'])
 def user_pitch():
+    now = datetime.now()
+    created_at = now.strftime("%d/%m/%Y %H:%M:%S")
     usercoll = mongo.db.users
     username = session['username']
-    the_user = usercoll.find_one({'username' : username})
-    # the_id = str(mongo.db.users.find_one({'username' : username}, {"username":0, "password":0}))
-    # if the_user = username:
-    #     return 
+    the_user = usercoll.find_one({'username': username})
     pitch = mongo.db.pitches
     title = request.form.get('title')
     genre_name = request.form.get('genre_name')
     director_name = request.form.get('director_name')
     actor_name = request.form.get('actor')
     description = request.form.get('discription')
-    username = session['username']
-    pitch.insert_one({'user_id': the_user['_id'], 'title': title, 'genre_name':genre_name, 'director_name':director_name, 'actor': actor_name, 'description': description})
+    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at, 'title': title,
+                      'genre_name': genre_name, 'director_name': director_name,
+                      'actor': actor_name, 'description': description, 
+                      'tag':{'film1':{'title':'title1', 'img':''},'film2':{'title':'title2', 'img':''},'location':'testloc'}})
     return redirect(url_for('add_pitch'))
 
 
-@app.route('/add_pitch/<username>/<title>/<desc>/<director>/<actor>')
-def insert_pitch(username, title, desc, director, actor):
-    user = mongo.db.users
-    the_user = users.find_one({'username' : username})
-    the_pitch = mongo.db.pitches
-    the_pitch.insert({'username': the_user['username'], 'title': title, 'description': desc, 'director': director, 'actor': actor})
-    return redirect(url_for('show_pitches'))
-
+# @app.route('/add_pitch/<username>/<title>/<desc>/<director>/<actor>')
+# def insert_pitch(username, title, desc, director, actor):
+#     user = mongo.db.users
+#     the_user = users.find_one({'username' : username})
+#     the_pitch = mongo.db.pitches
+#     the_pitch.insert({'username': the_user['username'], 'title': title, 'description': desc, 'director': director, 'actor': actor})
+#     return redirect(url_for('show_pitches'))
 
 @app.route('/show_pitches')
 def show_pitches():
