@@ -101,13 +101,16 @@ def edit_pitch(pitch_id):
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
 def update_pitch(pitch_id):
     pitches = mongo.db.pitches
-    pitches.update( {'_id': ObjectId(pitch_id)} ,
+    last_modified = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    pitches.update( {'_id': ObjectId(pitch_id)},
     {"$set": {
         'title':request.form.get('title'),
         'genre_name':request.form.get('genre_name'),
-        'director_name':request.form.get('director_name'),
+        'director_name':request.form.get('director'),
         'actor':request.form.get('actor'),
-        'description':request.form.get('description')}
+        'description':request.form.get('description'),
+        'last_modified':last_modified
+        }
     })
     return redirect(url_for('show_pitches'))
 

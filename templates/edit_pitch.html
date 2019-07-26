@@ -4,17 +4,21 @@
 <h2>Welcome {{ session['username']|title }}. You can now update your Pitch and resubmit. Best of luck!!!</h2>
 <form action="{{ url_for('update_pitch', pitch_id=pitch._id) }}" method="POST"">
 
-    <div class="input-field input-title">
+    <div class=" input-field input-title">
     <p>Change the Title</p>
     <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
     </div>
     <br>
     <div class="input-field" style="width:200px;">
         <label>Choose a New Genre?</label>
-        <select id="genre" name="genre_name" type="text" class="validate">
+        <select id="genre_name" name="genre_name" type="text" class="validate">
             <option value="{{pitch.genre_name}}" disabled selected>{{pitch.genre_name}}</option>
             {% for genre in genres %}
+            {% if genre.genre_name == pitch.genre_name %}
+            <option value="{{genre.genre_name}}" selected>{{genre.genre_name}}</option>
+            {% else %}
             <option value="{{genre.genre_name}}">{{genre.genre_name}}</option>
+            {% endif %}
             {% endfor %}
         </select>
     </div>
@@ -22,24 +26,32 @@
     <br>
     <div class="input-field" style="width:200px;">
         <label>Choose a New Director?</label>
-        <select id="director_name" name="director_name" type="text" class="validate">
+        <select id="director" name="director" type="text" class="validate">
             <option value="{{pitch.director_name}}" disabled selected>{{pitch.director_name}}</option>
             {% for director in directors %}
+            {% if director.director == pitch.director_name %}
+            <option value="{{director.director}}" selected>{{director.director}}</option>
+            {% else %}
             <option value="{{director.director}}">{{director.director}}</option>
+            {% endif %}
             {% endfor %}
         </select>
     </div>
 
     <br>
     <div class="input-field" style="width:200px;">
-            <label>Choose a New Actor?</label>
-            <select id="actor" name="actor" type="text" class="validate">
-                <option value="{{pitch.actor}}" disabled selected>{{pitch.actor}}</option>
-                {% for actor in actors %}
-                <option value="{{actor.actor}}">{{actor.actor}}</option>
-                {% endfor %}
-            </select>
-        </div>
+        <label>Choose a New Actor?</label>
+        <select id="actor" name="actor" type="text" class="validate">
+            <option value="{{pitch.actor}}" disabled selected>{{pitch.actor}}</option>
+            {% for actor in actors %}
+            {% if actor.actor == pitch.actor %}
+            <option value="{{actor.actor}}" selected>{{actor.actor}}</option>
+            {% else %}
+            <option value="{{actor.actor}}">{{actor.actor}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
 
     <br>
     <div class="input-field input-title">
