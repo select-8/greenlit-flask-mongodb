@@ -89,11 +89,14 @@ def insert_pitch():
 
 @app.route('/edit_pitch/<pitch_id>')
 def edit_pitch(pitch_id):
-    # usercoll = mongo.db.users
-    # username = session['username']
-    # user = usercoll.find_one({'username': username}, {"_id": 1})
+    _genres = mongo.db.genres.find()
+    genre_list = [genre for genre in _genres]
+    _directors = mongo.db.directors.find()
+    director_list = [directors for directors in _directors]
+    _actors = mongo.db.talent.find()
+    actor_list = [actors for actors in _actors]
     the_pitch = mongo.db.pitches.find_one({"_id": ObjectId(pitch_id)})
-    return render_template('edit_pitch.html', pitch=the_pitch)
+    return render_template('edit_pitch.html', pitch=the_pitch, genres = genre_list, directors = director_list, actors=actor_list)
 
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
 def update_pitch(pitch_id):
@@ -103,7 +106,7 @@ def update_pitch(pitch_id):
         'title':request.form.get('title'),
         'genre_name':request.form.get('genre_name'),
         'director_name':request.form.get('director_name'),
-        'actor':request.form.get('genre_name'),
+        'actor':request.form.get('actor'),
         'description':request.form.get('description')}
     })
     return redirect(url_for('show_pitches'))

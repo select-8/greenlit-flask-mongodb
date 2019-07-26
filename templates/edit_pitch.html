@@ -1,40 +1,53 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3>Edit Your Pitch</h3>
+<h2>Welcome {{ session['username']|title }}. You can now update your Pitch and resubmit. Best of luck!!!</h2>
 <form action="{{ url_for('update_pitch', pitch_id=pitch._id) }}" method="POST"">
-    <p>Welcome {{ session['username']|title }}</p>
 
     <div class="input-field input-title">
-        <label>Change the Title</label>
-        <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
+    <p>Change the Title</p>
+    <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
+    </div>
+    <br>
+    <div class="input-field" style="width:200px;">
+        <label>Choose a New Genre?</label>
+        <select id="genre" name="genre_name" type="text" class="validate">
+            <option value="{{pitch.genre_name}}" disabled selected>{{pitch.genre_name}}</option>
+            {% for genre in genres %}
+            <option value="{{genre.genre_name}}">{{genre.genre_name}}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <br>
-    <div class="input-field input-title">
-        <label>Different Genre?</label>
-        <input id="genre_name" name="genre_name" type="text" class="validate" value="{{pitch.genre_name}}">
+    <div class="input-field" style="width:200px;">
+        <label>Choose a New Director?</label>
+        <select id="director_name" name="director_name" type="text" class="validate">
+            <option value="{{pitch.director_name}}" disabled selected>{{pitch.director_name}}</option>
+            {% for director in directors %}
+            <option value="{{director.director}}">{{director.director}}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <br>
-    <div class="input-field input-title">
-        <label>Different Director?</label>
-        <input id="director_name" name="director_name" type="text" class="validate" value="{{pitch.director_name}}">
-    </div>
+    <div class="input-field" style="width:200px;">
+            <label>Choose a New Actor?</label>
+            <select id="actor" name="actor" type="text" class="validate">
+                <option value="{{pitch.actor}}" disabled selected>{{pitch.actor}}</option>
+                {% for actor in actors %}
+                <option value="{{actor.actor}}">{{actor.actor}}</option>
+                {% endfor %}
+            </select>
+        </div>
 
     <br>
     <div class="input-field input-title">
-        <label>Different Actor?</label>
-        <input id="actor" name="actor" type="text" class="validate" value="{{pitch.actor}}">
-    </div>
-
-    <br>
-    <div class="input-field input-title">
-        <label>Update Description?</label>
+        <p>Update Description?</p>
         <input id="description" name="description" type="text" class="validate" value="{{pitch.description}}">
     </div>
-    
-    <div class="row">
+    <br>
+    <div>
         <button type="submit">Update Your Pitch
         </button>
     </div>

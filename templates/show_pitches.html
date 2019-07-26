@@ -5,7 +5,8 @@
 <h3>Welcome back {{ session['username']|title }}. Here you can add some new pitches or edit and resubmit your current cache. Best of Luck!!!</h3>
 {% for pitch in pitches %}
 <ul>
-    <li>{{ pitch.title }} <button><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button></li>
+    <button><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
+    <li>{{ pitch.title }}</li>
     <li>{{ pitch.genre_name }}</li>
     <li>{{ pitch.director_name }}</li>
     <li>{{ pitch.actor }}</li>
