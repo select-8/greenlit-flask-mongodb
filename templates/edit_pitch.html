@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Edit Your Pitch</h3>
+<form action="{{ url_for('update_pitch', pitch_id=pitch._id) }}" method="POST"">
+    <p>Welcome {{ session['username']|title }}</p>
+
+    <div class="input-field input-title">
+        <label>Change the Title</label>
+        <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
+    </div>
+
+    <br>
+    <div class="input-field input-title">
+        <label>Different Genre?</label>
+        <input id="genre_name" name="genre_name" type="text" class="validate" value="{{pitch.genre_name}}">
+    </div>
+
+    <br>
+    <div class="input-field input-title">
+        <label>Different Director?</label>
+        <input id="director_name" name="director_name" type="text" class="validate" value="{{pitch.director_name}}">
+    </div>
+
+    <br>
+    <div class="input-field input-title">
+        <label>Different Actor?</label>
+        <input id="actor" name="actor" type="text" class="validate" value="{{pitch.actor}}">
+    </div>
+
+    <br>
+    <div class="input-field input-title">
+        <label>Update Description?</label>
+        <input id="description" name="description" type="text" class="validate" value="{{pitch.description}}">
+    </div>
+    
+    <div class="row">
+        <button type="submit">Update Your Pitch
+        </button>
+    </div>
+</form>
+
+
+
+
+
+
+{% endblock %}

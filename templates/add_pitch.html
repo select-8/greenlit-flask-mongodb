@@ -2,7 +2,7 @@
 {% block content %}
 
 <h3>Add Your Pitch</h3>
-<form action="{{ url_for('user_pitch') }}" method="POST"">
+<form action="{{ url_for('insert_pitch') }}" method="POST"">
     <p>Welcome {{ session['username']|title }}</p>
     <div class=" input-field input-title">
     <label>Give your film a title</label>
@@ -42,7 +42,7 @@
     </div>
     <br>
     <div class="row">
-        <button type="submit" action="{{ url_for('user_pitch') }}">Add Your Pitch
+        <button type="submit" action="{{ url_for('insert_pitch') }}">Add Your Pitch
         </button>
     </div>
     <br>

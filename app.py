@@ -14,9 +14,12 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 mongo = PyMongo(app)
 
 @app.route('/')
+@app.route('/show_pitches')
+def show_pitches():
+    return render_template("show_pitches.html", pitches=mongo.db.pitches.find())
+
 def index():
     return render_template('index.html')
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -50,10 +53,9 @@ def register():
 should show session user and list of pitches with option to edit
 and maybe to add a profile?
 """
-@app.route('/show_user')
-def show_user():
+@app.route('/show_users')
+def show_users():
     return render_template("show_users.html", users=mongo.db.users.find())
-
 
 @app.route('/add_pitch')
 def add_pitch():
@@ -65,11 +67,10 @@ def add_pitch():
     actor_list = [actors for actors in _actors]
     return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list)
 
-
-@app.route('/user_pitch', methods=['POST'])
-def user_pitch():
-    now = datetime.now()
-    created_at = now.strftime("%d/%m/%Y %H:%M:%S")
+''' should be called insert_pitch '''
+@app.route('/insert_pitch', methods=['POST'])
+def insert_pitch():
+    created_at = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     usercoll = mongo.db.users
     username = session['username']
     the_user = usercoll.find_one({'username': username})
@@ -86,17 +87,26 @@ def user_pitch():
     return redirect(url_for('add_pitch'))
 
 
-# @app.route('/add_pitch/<username>/<title>/<desc>/<director>/<actor>')
-# def insert_pitch(username, title, desc, director, actor):
-#     user = mongo.db.users
-#     the_user = users.find_one({'username' : username})
-#     the_pitch = mongo.db.pitches
-#     the_pitch.insert({'username': the_user['username'], 'title': title, 'description': desc, 'director': director, 'actor': actor})
-#     return redirect(url_for('show_pitches'))
+@app.route('/edit_pitch/<pitch_id>')
+def edit_pitch(pitch_id):
+    # usercoll = mongo.db.users
+    # username = session['username']
+    # user = usercoll.find_one({'username': username}, {"_id": 1})
+    the_pitch = mongo.db.pitches.find_one({"_id": ObjectId(pitch_id)})
+    return render_template('edit_pitch.html', pitch=the_pitch)
 
-@app.route('/show_pitches')
-def show_pitches():
-    return render_template("show_pitches.html", pitches=mongo.db.pitches.find())
+@app.route('/update_pitch/<pitch_id>', methods=["POST"])
+def update_pitch(pitch_id):
+    pitches = mongo.db.pitches
+    pitches.update( {'_id': ObjectId(pitch_id)} ,
+    {"$set": {
+        'title':request.form.get('title'),
+        'genre_name':request.form.get('genre_name'),
+        'director_name':request.form.get('director_name'),
+        'actor':request.form.get('genre_name'),
+        'description':request.form.get('description')}
+    })
+    return redirect(url_for('show_pitches'))
 
 
 if __name__ == '__main__':
