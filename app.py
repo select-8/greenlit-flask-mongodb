@@ -2,6 +2,8 @@ import os
 from flask import Flask, render_template, redirect, request, session, url_for
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from bson import json_util
+import json
 from datetime import date, datetime
 import bcrypt
 
@@ -13,11 +15,28 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
-@app.route('/')
+@app.route('/add_tag')
+def add_tages():
+    tags = mongo.db.tags
+    tags.insert_one({'title':'Gone With The Wind', 'img':''})
+    tags.insert_one({'title':'Scarface', 'img':''})
+    tags.insert_one({'title':'Alien', 'img':''})
+    tags.insert_one({'title':'The Odd Couple', 'img':''})
+    tags.insert_one({'title':'Forest Gump', 'img':''})
+    return 'tag in'
+
+# @app.route('/get_tags')
+# def get_tags():
+#     tag = mongo.db.tags.find()
+#     return str(json.dumps({'tags':list(tag)},default=json_util.default)) 
+
 @app.route('/show_pitches')
 def show_pitches():
-    return render_template("show_pitches.html", pitches=mongo.db.pitches.find())
+    pitches = mongo.db.pitches.find()
+    tags = mongo.db.tags.find()
+    return render_template("show_pitches.html", pitches=pitches, tags=tags)
 
+@app.route('/')
 def index():
     return render_template('index.html')
 
@@ -65,25 +84,40 @@ def add_pitch():
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
-    return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list)
+    _tags = mongo.db.tags.find()
+    tags_list = [tags for tags in _tags]
+    return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list, tags=tags_list)
 
-''' should be called insert_pitch '''
+
 @app.route('/insert_pitch', methods=['POST'])
 def insert_pitch():
     created_at = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    last_modified = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     usercoll = mongo.db.users
     username = session['username']
     the_user = usercoll.find_one({'username': username})
+    tags = mongo.db.tags
     pitch = mongo.db.pitches
     title = request.form.get('title')
     genre_name = request.form.get('genre_name')
     director_name = request.form.get('director_name')
     actor_name = request.form.get('actor')
     description = request.form.get('discription')
-    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at, 'title': title,
+    tag_film1 = request.form.get('film_1')
+    tag_film2 = request.form.get('film_2')
+    # tag_location = request.form.get('location')
+    # tag_img1 = tags.find({'title': request.form.get('film_1')}, {"img": 1})
+    # tag_img2 = tags.find({'title': tag_film2}, {"img": 1})
+    # loc_img = tags.find({'title': tag_location}, {"img": 1})
+    # return tag_img1
+    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at, 
+                      'last_modified': last_modified,'title': title,
                       'genre_name': genre_name, 'director_name': director_name,
                       'actor': actor_name, 'description': description, 
-                      'tag':{'film1':{'title':'title1', 'img':''},'film2':{'title':'title2', 'img':''},'location':'testloc'}})
+                      'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location}
+    #                   ,
+    #                   'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img }
+                      })
     return redirect(url_for('add_pitch'))
 
 

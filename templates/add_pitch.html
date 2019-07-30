@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<h3>Add Your Pitch</h3>
+<br>
+<h3>Welcome {{ session['username']|title }}</h3>
+<h5>Add Your Pitch</h5>
+<br>
 <form action="{{ url_for('insert_pitch') }}" method="POST"">
-    <p>Welcome {{ session['username']|title }}</p>
-    <div class=" input-field input-title">
-    <label>Give your film a title</label>
-    <textarea id="title" name="title"></textarea>
+    <div class="input-field input-title">
+    <textarea class="dt" id="title" name="title" placeholder="Give your film a title"></textarea>
     </div>
     <br>
     <div class=" input-field" style="width:200px;">
@@ -37,9 +37,39 @@
     </div>
     <br>
     <div class="input-field input-desc">
-        <label>Describe your film in 30 characters</label>
-        <textarea maxlength="50" id="description" name="discription" cols="30" rows="5" placeholder="50 Characters Pitches"></textarea>
+        <textarea class="dt" maxlength="50" id="description" name="discription" cols="30" rows="5"
+            placeholder="Describe your film in 50 characters"></textarea>
     </div>
+    <br>
+
+    <div>
+        <div class="row">
+            <div class="col-12 col-md-3 input-field">
+                <select id="film_1" name="film_1">
+                    <option value="" disabled selected>Film 1</option>
+                    {% for title in tags %}
+                    <option value="{{title.title}}">{{title.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-1">
+                <p>Meets:</p>
+            </div>
+            <div class="col-12 col-md-3 input-field">
+                <select id="film_2" name="film_2">
+                    <option value="" disabled selected>Film 2</option>
+                    {% for title in tags %}
+                    <option value="{{title.title}}">{{title.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-3 location input-field input-desc">
+                <textarea maxlength="20" id="location" name="location" cols="30" rows="1"
+                    placeholder="in Space"></textarea>
+            </div>
+        </div>
+    </div>
+
     <br>
     <div class="row">
         <button type="submit" action="{{ url_for('insert_pitch') }}">Add Your Pitch
@@ -50,5 +80,6 @@
         <button><a href="{{ url_for('show_pitches') }}">View Your Pitches</a></button>
     </div>
 </form>
+
 
 {% endblock %}

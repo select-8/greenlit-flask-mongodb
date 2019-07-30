@@ -5,11 +5,13 @@
 
 {% if session['username'] %}
 <h3>Welcome to our site {{ session['username']|title }}</h3>
+<br>
 <div class="row">
-    <button><a href="{{ url_for('add_pitch') }}">click here to view your pitches</a></button>
+    <button><a href="{{ url_for('show_pitches') }}">View your pitches</a></button>
 </div>
+<br>
 <div class="row">
-        <button><a href="{{ url_for('insert_pitch') }}">click here to add a new pitch</a></button>
+        <button><a href="{{ url_for('add_pitch') }}">Add a new pitch</a></button>
     </div>
 {% else %}
 <h3>Welcome to our site please login below</h3>

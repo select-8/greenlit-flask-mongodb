@@ -1,4 +1,4 @@
-textarea {
+textarea .dt {
   width: 300px;
   height: 100px;
   padding: 5px 5px;
@@ -10,7 +10,6 @@ textarea {
   resize: none;
   outline: none;
 }
-
 
 
   /* The container must be positioned relative: */
