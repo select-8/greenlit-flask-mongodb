@@ -19,24 +19,17 @@
         <li>{{ pitch.actor }}</li>
         <li>{{ pitch.description }}</li>
         <li>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</li>
-        
-        {% for tag in tags %}
-
-            {% if pitch.tag.film1 == tag.title %}
-            <img class="featurette-image img-responsive" src="{{ url_for('static', filename = tag.img ) }}" width="200px"
-            height="100px">
-            {% else %}
-            Ω
-            {% endif %}
-
-        {% endfor %}
+        <li>
+        <img class="featurette-image img-responsive" src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}" width="200px"
+        height="100px">
+        <img class="featurette-image img-responsive" src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}" width="200px"
+        height="100px">
+        <img class="featurette-image img-responsive" src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}" width="200px"
+        height="100px">
+        </li>
         <hr>
-    {% endfor %}
     </div>
+    {% endfor %}
 </ul>
-
-
-
-
 
 {% endblock %}

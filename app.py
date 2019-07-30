@@ -105,19 +105,17 @@ def insert_pitch():
     description = request.form.get('discription')
     tag_film1 = request.form.get('film_1')
     tag_film2 = request.form.get('film_2')
-    # tag_location = request.form.get('location')
-    # tag_img1 = tags.find({'title': request.form.get('film_1')}, {"img": 1})
-    # tag_img2 = tags.find({'title': tag_film2}, {"img": 1})
-    # loc_img = tags.find({'title': tag_location}, {"img": 1})
-    # return tag_img1
+    tag_location = request.form.get('location')
+    tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
+    tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
+    loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
     pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at, 
-                      'last_modified': last_modified,'title': title,
-                      'genre_name': genre_name, 'director_name': director_name,
-                      'actor': actor_name, 'description': description, 
-                      'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location}
-    #                   ,
-    #                   'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img }
-                      })
+                    'last_modified': last_modified,'title': title,
+                    'genre_name': genre_name, 'director_name': director_name,
+                    'actor': actor_name, 'description': description, 
+                    'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
+                    'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img }
+                    })
     return redirect(url_for('add_pitch'))
 
 
