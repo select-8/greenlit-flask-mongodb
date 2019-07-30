@@ -15,27 +15,6 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
-@app.route('/add_tag')
-def add_tages():
-    tags = mongo.db.tags
-    tags.insert_one({'title':'Gone With The Wind', 'img':''})
-    tags.insert_one({'title':'Scarface', 'img':''})
-    tags.insert_one({'title':'Alien', 'img':''})
-    tags.insert_one({'title':'The Odd Couple', 'img':''})
-    tags.insert_one({'title':'Forest Gump', 'img':''})
-    return 'tag in'
-
-# @app.route('/get_tags')
-# def get_tags():
-#     tag = mongo.db.tags.find()
-#     return str(json.dumps({'tags':list(tag)},default=json_util.default)) 
-
-@app.route('/show_pitches')
-def show_pitches():
-    pitches = mongo.db.pitches.find()
-    tags = mongo.db.tags.find()
-    return render_template("show_pitches.html", pitches=pitches, tags=tags)
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -72,6 +51,13 @@ def register():
 should show session user and list of pitches with option to edit
 and maybe to add a profile?
 """
+
+@app.route('/show_pitches')
+def show_pitches():
+    pitches = mongo.db.pitches.find()
+    tags = mongo.db.tags.find()
+    return render_template("show_pitches.html", pitches=pitches, tags=tags)
+
 @app.route('/show_users')
 def show_users():
     return render_template("show_users.html", users=mongo.db.users.find())
