@@ -127,12 +127,20 @@ def edit_pitch(pitch_id):
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
+    _tags = mongo.db.tags.find()
+    tag_list = [tags for tags in _tags]
     the_pitch = mongo.db.pitches.find_one({"_id": ObjectId(pitch_id)})
-    return render_template('edit_pitch.html', pitch=the_pitch, genres = genre_list, directors = director_list, actors=actor_list)
+    return render_template('edit_pitch.html', 
+                            pitch=the_pitch, 
+                            genres = genre_list, 
+                            directors = director_list, 
+                            actors=actor_list, 
+                            tags=tag_list)
 
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
 def update_pitch(pitch_id):
     pitches = mongo.db.pitches
+    tags = mongo.db.tags
     last_modified = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     pitches.update( {'_id': ObjectId(pitch_id)},
     {"$set": {
@@ -141,6 +149,12 @@ def update_pitch(pitch_id):
         'director_name':request.form.get('director'),
         'actor':request.form.get('actor'),
         'description':request.form.get('description'),
+        'tag.film1':request.form.get('tag1'),
+        'tag.film2':request.form.get('tag2'),
+        'tag.location':request.form.get('location'),
+        'imgs.tag_img1':tags.find_one({'title': request.form.get('tag1')}, {"img": 1, "_id": 0}),
+        'imgs.tag_img2':tags.find_one({'title': request.form.get('tag2')}, {"img": 1, "_id": 0}),
+        'imgs.loc_img':tags.find_one({'location': request.form.get('location')}, {"img": 1, "_id": 0}),
         'last_modified':last_modified
         }
     })

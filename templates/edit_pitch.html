@@ -59,6 +59,35 @@
         <input id="description" name="description" type="text" class="validate" value="{{pitch.description}}">
     </div>
     <br>
+    <br>
+    <div class="input-field" style="width:200px;">
+        <label>Update Your Tag</label>
+        <select id="tag1" name="tag1" type="text" class="validate">
+            <option value="{{pitch.tag.film1}}" disabled selected>{{pitch.tag.film1}}</option>
+            {% for tag in tags %}
+            {% if tag.title == pitch.tag.film1 %}
+            <option value="{{tag.title}}" selected>{{tag.title}}</option>
+            {% else %}
+            <option value="{{tag.title}}">{{tag.title}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <select id="tag2" name="tag2" type="text" class="validate">
+            <option value="{{pitch.tag.film2}}" disabled selected>{{pitch.tag.film2}}</option>
+            {% for tag in tags %}
+            {% if tag.title == pitch.tag.film2 %}
+            <option value="{{tag.title}}" selected>{{tag.title}}</option>
+            {% else %}
+            <option value="{{tag.title}}">{{tag.title}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <div class="input-field input-title">
+            <input id="location" name="location" type="text" class="validate" value="{{pitch.tag.location}}">
+        </div>
+    </div>
+    <br>
+    <br>
     <div>
         <button type="submit">Update Your Pitch
         </button>
