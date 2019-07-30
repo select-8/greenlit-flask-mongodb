@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, redirect, request, session, url_for
-from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo, pymongo
 from bson.objectid import ObjectId
 from bson import json_util
 import json
@@ -30,7 +30,7 @@ def login():
             session['username'] = request.form['username']
             return redirect(url_for('add_pitch'))
         return 'Invalid Password'
-        # return render_template('login.html', error = error)
+    #     return render_template('login.html', error = error)
     # return 'Invalid Username'
     return render_template('index.html', error = error)
 
@@ -52,9 +52,10 @@ should show session user and list of pitches with option to edit
 and maybe to add a profile?
 """
 
-@app.route('/show_pitches')
-def show_pitches():
-    pitches = mongo.db.pitches.find()
+@app.route('/show_pitches', defaults={'sort_field': 'last_modified'})
+@app.route('/show_pitches/<sort_field>')
+def show_pitches(sort_field):
+    pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
     tags = mongo.db.tags.find()
     return render_template("show_pitches.html", pitches=pitches, tags=tags)
 
@@ -70,9 +71,12 @@ def add_pitch():
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
-    _tags = mongo.db.tags.find()
-    tags_list = [tags for tags in _tags]
-    return render_template('add_pitch.html', genres = genre_list, directors = director_list, actors=actor_list, tags=tags_list)
+    _tag_titles = mongo.db.tags.find({"type": "title"},{"title": 1})
+    tag_titles_list = [title for title in _tag_titles]
+    _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
+    tag_locations_list = [location for location in _tag_locations]
+    return render_template('add_pitch.html', genres = genre_list, directors=director_list, actors=actor_list, tag_titles=tag_titles_list, 
+    tag_locations=tag_locations_list)
 
 
 @app.route('/insert_pitch', methods=['POST'])
@@ -95,10 +99,10 @@ def insert_pitch():
     tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
     tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
     loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
-    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at, 
+    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at,
                     'last_modified': last_modified,'title': title,
                     'genre_name': genre_name, 'director_name': director_name,
-                    'actor': actor_name, 'description': description, 
+                    'actor': actor_name, 'description': description,
                     'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
                     'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img }
                     })
@@ -113,15 +117,19 @@ def edit_pitch(pitch_id):
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
-    _tags = mongo.db.tags.find()
-    tag_list = [tags for tags in _tags]
+    _tag_titles = mongo.db.tags.find({"type": "title"},{"title": 1})
+    tag_titles_list = [title for title in _tag_titles]
+    _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
+    tag_locations_list = [location for location in _tag_locations]
     the_pitch = mongo.db.pitches.find_one({"_id": ObjectId(pitch_id)})
     return render_template('edit_pitch.html', 
                             pitch=the_pitch, 
                             genres = genre_list, 
                             directors = director_list, 
                             actors=actor_list, 
-                            tags=tag_list)
+                            tag_titles=tag_titles_list, 
+                            tag_locations=tag_locations_list)
+
 
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
 def update_pitch(pitch_id):

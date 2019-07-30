@@ -64,7 +64,7 @@
         <label>Update Your Tag</label>
         <select id="tag1" name="tag1" type="text" class="validate">
             <option value="{{pitch.tag.film1}}" disabled selected>{{pitch.tag.film1}}</option>
-            {% for tag in tags %}
+            {% for tag in tag_titles %}
             {% if tag.title == pitch.tag.film1 %}
             <option value="{{tag.title}}" selected>{{tag.title}}</option>
             {% else %}
@@ -74,7 +74,7 @@
         </select>
         <select id="tag2" name="tag2" type="text" class="validate">
             <option value="{{pitch.tag.film2}}" disabled selected>{{pitch.tag.film2}}</option>
-            {% for tag in tags %}
+            {% for tag in tag_titles %}
             {% if tag.title == pitch.tag.film2 %}
             <option value="{{tag.title}}" selected>{{tag.title}}</option>
             {% else %}

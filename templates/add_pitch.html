@@ -5,7 +5,7 @@
 <h5>Add Your Pitch</h5>
 <br>
 <form action="{{ url_for('insert_pitch') }}" method="POST"">
-    <div class="input-field input-title">
+    <div class=" input-field input-title">
     <textarea class="dt" id="title" name="title" placeholder="Give your film a title"></textarea>
     </div>
     <br>
@@ -47,7 +47,7 @@
             <div class="col-12 col-md-3 input-field">
                 <select id="film_1" name="film_1">
                     <option value="" disabled selected>Film 1</option>
-                    {% for title in tags %}
+                    {% for title in tag_titles %}
                     <option value="{{title.title}}">{{title.title}}</option>
                     {% endfor %}
                 </select>
@@ -58,14 +58,16 @@
             <div class="col-12 col-md-3 input-field">
                 <select id="film_2" name="film_2">
                     <option value="" disabled selected>Film 2</option>
-                    {% for title in tags %}
+                    {% for title in tag_titles %}
                     <option value="{{title.title}}">{{title.title}}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col-12 col-md-3 location input-field input-desc">
+                
                 <textarea maxlength="20" id="location" name="location" cols="30" rows="1"
                     placeholder="in Space"></textarea>
+                
             </div>
         </div>
     </div>
