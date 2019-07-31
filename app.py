@@ -105,7 +105,8 @@ def insert_pitch():
                     'genre_name': genre_name, 'director_name': director_name,
                     'actor': actor_name, 'description': description,
                     'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
-                    'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img }
+                    'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
+                    'is_del':False
                     })
     return redirect(url_for('add_pitch'))
 
@@ -150,7 +151,8 @@ def update_pitch(pitch_id):
         'imgs.tag_img1':tags.find_one({'title': request.form.get('tag1')}, {"img": 1, "_id": 0}),
         'imgs.tag_img2':tags.find_one({'title': request.form.get('tag2')}, {"img": 1, "_id": 0}),
         'imgs.loc_img':tags.find_one({'location': request.form.get('location')}, {"img": 1, "_id": 0}),
-        'last_modified':last_modified
+        'last_modified':last_modified,
+        'is_del':False
         }
     })
     return redirect(url_for('show_pitches'))
