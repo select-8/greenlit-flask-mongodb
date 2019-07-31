@@ -71,3 +71,8 @@ textarea .dt {
 .select-items div:hover, .same-as-selected {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+.flash-del h5 {
+  padding: 0;
+  margin: 0;
+}

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, request, session, url_for
+from flask import Flask, render_template, redirect, request, session, url_for, flash
 from flask_pymongo import PyMongo, pymongo
 from bson.objectid import ObjectId
 from bson import json_util
@@ -57,6 +57,7 @@ and maybe to add a profile?
 def show_pitches(sort_field):
     pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
     tags = mongo.db.tags.find()
+    users = mongo.db.users.find()
     return render_template("show_pitches.html", pitches=pitches, tags=tags)
 
 @app.route('/show_users')
@@ -152,6 +153,22 @@ def update_pitch(pitch_id):
         'last_modified':last_modified
         }
     })
+    return redirect(url_for('show_pitches'))
+
+@app.route('/hide_pitch/<pitch_id>', methods=["POST"])
+def hide_pitch(pitch_id):
+    pitches = mongo.db.pitches
+    pitches.update( {'_id': ObjectId(pitch_id)},
+    {"$set": {
+        'is_del':True
+    }})
+    return redirect(url_for('show_pitches'))
+
+@app.route('/delete_pitch/<pitch_id>')
+def delete_pitch(pitch_id):
+    pitches = mongo.db.pitches
+    pitches.remove({'_id': ObjectId(pitch_id)})
+    flash('Your pitch has been removed from further consideration!')
     return redirect(url_for('show_pitches'))
 
 

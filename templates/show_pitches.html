@@ -1,7 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<div class="row">
+    <div class="col-12 flash-del">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <h5 class=flashes>
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </h5>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<br>
 <h3>Pitches</h3>
 <h4>Welcome back {{ session['username']|title }}.</h4>
+<br>
+<button type="button"><a href="{{ url_for('show_pitches', sort_field='created_at') }}">Sort by votes</a></button>
+<button type="button"><a href="{{ url_for('show_pitches', sort_field='last_modified') }}">Sort by last
+        update</a></button>
 <br>
 <br>
 <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button>
@@ -9,19 +29,29 @@
 <br>
 <ul id="make-reorderable-by-rating">
     {% for pitch in pitches %}
+        {% if pitch.is_del == false %}
     <div class="pitch-collection">
         <button><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
+
+        <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
+            <button type="submit">Delete</button>
+        </form>
+
         <li class="title">{{ pitch.title }}</li>
-        <li>{{ pitch.genre_name }}</li>
+        <li>{{ pitch.genre_name|title }}</li>
         <li>{{ pitch.director_name }}</li>
         <li>{{ pitch.actor }}</li>
         <li>{{ pitch.description }}</li>
         <li>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</li>
-        <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}" onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
-        <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}" onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
-        <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}" onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
+        <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
+            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
+        <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
+            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
+        <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
+            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px" height="100px">
         <hr>
     </div>
+    {% endif %}
     {% endfor %}
 </ul>
 
