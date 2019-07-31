@@ -28,7 +28,8 @@ def login():
     if login_user:
         if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['username'] = request.form['username']
-            return redirect(url_for('add_pitch'))
+            session['logged_in'] = True
+            return redirect(url_for('show_pitches'))
         return 'Invalid Password'
     #     return render_template('login.html', error = error)
     # return 'Invalid Username'
@@ -57,12 +58,27 @@ and maybe to add a profile?
 def show_pitches(sort_field):
     pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
     tags = mongo.db.tags.find()
+    username = session.get('username')
     users = mongo.db.users.find()
-    return render_template("show_pitches.html", pitches=pitches, tags=tags)
+    count = mongo.db.pitches.count({'username' : username})
+    if session.get('logged_in') == True:
+        return render_template("show_pitches.html", pitches=pitches, tags=tags, users=users, count=count)
+    return redirect(url_for('show_all_pitches'))
+
+@app.route('/show_all_pitches', defaults={'sort_field': 'last_modified'})
+@app.route('/show_all_pitches/<sort_field>')
+def show_all_pitches(sort_field):
+    pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
+    tags = mongo.db.tags.find()
+    return render_template("show_all_pitches.html", pitches=pitches, tags=tags)
+
 
 @app.route('/show_users')
 def show_users():
-    return render_template("show_users.html", users=mongo.db.users.find())
+    usercoll = mongo.db.users
+    username = session['username']
+    the_user = usercoll.find_one({'username': username})
+    return render_template("show_users.html", user=the_user)
 
 @app.route('/add_pitch')
 def add_pitch():
@@ -76,7 +92,7 @@ def add_pitch():
     tag_titles_list = [title for title in _tag_titles]
     _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
     tag_locations_list = [location for location in _tag_locations]
-    return render_template('add_pitch.html', genres = genre_list, directors=director_list, actors=actor_list, tag_titles=tag_titles_list, 
+    return render_template('add_pitch.html', genres = genre_list, directors=director_list, actors=actor_list, tag_titles=tag_titles_list,
     tag_locations=tag_locations_list)
 
 
@@ -100,7 +116,7 @@ def insert_pitch():
     tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
     tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
     loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
-    pitch.insert_one({'user_id': the_user['_id'], 'created_at': created_at,
+    pitch.insert_one({'username': the_user['username'], 'created_at': created_at,
                     'last_modified': last_modified,'title': title,
                     'genre_name': genre_name, 'director_name': director_name,
                     'actor': actor_name, 'description': description,
@@ -109,6 +125,7 @@ def insert_pitch():
                     'is_del':False
                     })
     return redirect(url_for('add_pitch'))
+    # find_one_and_update
 
 
 @app.route('/edit_pitch/<pitch_id>')
@@ -164,13 +181,14 @@ def hide_pitch(pitch_id):
     {"$set": {
         'is_del':True
     }})
+    flash('Your pitch has been removed from further consideration!')
     return redirect(url_for('show_pitches'))
 
-@app.route('/delete_pitch/<pitch_id>')
-def delete_pitch(pitch_id):
+@app.route('/delete_pitch', methods=["POST"])
+def delete_pitch():
     pitches = mongo.db.pitches
-    pitches.remove({'_id': ObjectId(pitch_id)})
-    flash('Your pitch has been removed from further consideration!')
+    pitches.remove({'is_del': True})
+    flash('Hey Admin, you have flushed out the deleted pitches!')
     return redirect(url_for('show_pitches'))
 
 

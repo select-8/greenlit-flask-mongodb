@@ -30,10 +30,8 @@
         <h3>Pitches</h3>
     </div>
     <div class="col-12">
-        {% if session['username'] and count > 0 %}
+        {% if session['username'] %}
         <h4>Welcome {{ session['username']|title }}.</h4>
-        {% elif session['username'] and count == 0 %}
-        <h4>Welcome {{ session['username']|title }} ready to add your first pitch?.</h4>
         {% else %}
         <button type="button"><a href="{{ url_for('index') }}">Hello non logged in user, log in FFS!!!</a></button>
         {% endif %}
@@ -45,27 +43,32 @@
         <button><a href="{{ url_for('show_pitches', sort_field='created_at') }}">Sort by votes</a></button>
         <button type="button"><a href="{{ url_for('show_pitches', sort_field='last_modified') }}">Sort by last
                 update</a></button>
-        <button type="button"><a href="{{ url_for('show_all_pitches', sort_field='last_modified') }}">Show all pitches</a></button>
     </div>
 </div>
 
 <div class="container" id="make-reorderable-by-rating">
     {# https://shubhamjain.co/til/capitalizing-first-letter-in-jinja/ #}
     {% for pitch in pitches %}
-    {% if pitch.is_del == false and pitch.username == session['username'] %}
+    {% if pitch.is_del == false %}
     <hr style="border: 2px dashed black">
     <div class="pitch-collection">
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-2">
                 <button type="button"><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit this
                         pitch</a></button>
             </div>
-            <div class="col-1"></div>
-            <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
-                <button type="submit">Remove this pitch</button>
-            </form>
-        </div>
+            <div class="col-1">
+                <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
+                    <button type="submit">Remove this pitch</button>
+                </form>
+            </div>
+        </div> -->
         <br>
+        <div class="row">
+                <div class="col-12">
+                    <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
+                </div>
+            </div>
         <div class="row">
             <div class="col-12">
                 <h3 class="title">{{ pitch.title|title }}</h3>
