@@ -25,6 +25,7 @@ _directors = mongo.db.directors
 _actors = mongo.db.talent
 _tags = mongo.db.tags
 tags = _tags.find()
+_votes = mongo.db.votes
 
 created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
@@ -110,10 +111,9 @@ def add_pitch():
 
 @app.route('/insert_pitch', methods=['POST'])
 def insert_pitch():
-    # created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
-    # last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
     usercoll = mongo.db.users
-    username = session['username']
+    # username = session['username']
+    username = session.get('username')
     the_user = usercoll.find_one({'username': username})
     tags = mongo.db.tags
     pitch = mongo.db.pitches
@@ -186,45 +186,50 @@ def update_pitch(pitch_id):
     })
     return redirect(url_for('show_pitches'))
 
+
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
 def is_greenlit(pitch_id):
     random_is_greenlit = randint(0,1)
     bad_actor = _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0})
-    for k, v in bad_actor.items():
-        if v in ['Matt Damon']:
-            _pitches.update( {'_id': ObjectId(pitch_id)},
-            {"$set": {'is_greenlit':0}})
-            flash('no way lad, not Matt Damon')
-        else:
-            _pitches.update( {'_id': ObjectId(pitch_id)},
-            {"$set": {'is_greenlit':randint(0,1)}})
-            flash("how did you do?")
+    bad_director = _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0})
+    for ka, va in bad_actor.items():
+        for kd, vd in bad_director.items():
+            if va == 'Matt Damon':
+                _pitches.update( {'_id': ObjectId(pitch_id)},
+                {"$set": {'is_greenlit':0}})
+                flash('no way lad, not Matt Damon')
+            elif va == 'Spike Jones' and vd == 'David O Russell':
+                _pitches.update( {'_id': ObjectId(pitch_id)},
+                {"$set": {'is_greenlit':0}})
+                flash('those two will never work together, try again!')
+            else:
+                _pitches.update( {'_id': ObjectId(pitch_id)},
+                {"$set": {'is_greenlit':randint(0,1)}})
+                flash("how did you do?")
     return redirect(url_for('show_pitches'))
 
-    # if _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0}) == 'Matt Damon'
-    #     and _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0}) == 'Coen Brothers':
-    #     pitches.update( {'_id': ObjectId(pitch_id)},
-    #     {"$set": {
-    #         'is_greenlit':0
-    #     }})
-    #     flash('no way lad')
-    # elif _pitches.find_one({'director_name', 1},{'_id':ObjectId(pitch_id)}) == 'David O Russell':
-    #     pitches.update( {'_id': ObjectId(pitch_id)},
-    #     {"$set": {
-    #         'is_greenlit':0
-    #     }})
-    #     flash("are you fucking nuts, he's cancelled!")
-    # else:
-    #     {"$set": {
-    #         'is_greenlit':random_is_greenlit
-    #     }})
-    #     flash("how did you do?")
+@app.route('/votes/<pitch_id>', methods=["POST", "GET"])
+def votes(pitch_id):
+    current_user = session.get('username')
+    if _votes.find_one({'pitch_id': ObjectId(pitch_id)}):
+        pass
+        _votes.update({ 'pitch_id': ObjectId(pitch_id) },{'$push': { 'voters': current_user }, "$inc": {'votes': 1} } )
+    else:
+        _votes.insert(
+            { 'pitch_id': ObjectId(pitch_id), 'voters': [current_user], 'votes': 1 })
 
-@app.route('/test')
-def test():
-    test1 = _pitches.find_one({'_id':ObjectId('5d42b06df4913bbe40fb075d')},{'actor': 1, '_id': 0})
-    for k, v in test1.items():
-        return v
+
+
+    # owner = _pitches.find_one({'_id':ObjectId(pitch_id)}, {'username': 1, '_id' : 0})
+    # if not _votes.find({'_id':ObjectId(pitch_id)}):
+    #     _votes.insert({'pitch_id': pitch_id, 'owner': owner})
+    
+    #     _pitches.update( {'_id': ObjectId(pitch_id)},
+    #     {"$inc": {'votes': 1}
+    #     })
+    
+    return redirect(url_for('show_all_pitches'))
+
 
 
 @app.route('/hide_pitch/<pitch_id>', methods=["POST"])
@@ -237,6 +242,7 @@ def hide_pitch(pitch_id):
     flash('Your pitch has been removed from further consideration!')
     return redirect(url_for('show_pitches'))
 
+
 @app.route('/delete_pitch', methods=["POST"])
 def delete_pitch():
     pitches = mongo.db.pitches
@@ -247,5 +253,5 @@ def delete_pitch():
 
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
-            port=os.getenv('PORT'),
-            debug=True)
+            port=os.environ.get('PORT'),
+            debug=os.getenv('DEBUG'))

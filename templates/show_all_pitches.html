@@ -53,23 +53,17 @@
     {% if pitch.is_del == false %}
     <hr style="border: 2px dashed black">
     <div class="pitch-collection">
-        <!-- <div class="row">
-            <div class="col-2">
-                <button type="button"><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit this
-                        pitch</a></button>
-            </div>
-            <div class="col-1">
-                <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
-                    <button type="submit">Remove this pitch</button>
-                </form>
-            </div>
-        </div> -->
+        <div class="col-2">
+            <form action="{{ url_for('votes', pitch_id=pitch._id) }}" method="POST">
+                <button type="submit">Vote</button>
+            </form>
+        </div>
         <br>
         <div class="row">
-                <div class="col-12">
-                    <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
-                </div>
+            <div class="col-12">
+                <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
             </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <h3 class="title">{{ pitch.title|title }}</h3>

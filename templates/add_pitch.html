@@ -74,8 +74,10 @@
                 </select>
             </div>
             <div class="col-12 col-md-3 location input-field input-desc">
-                <textarea maxlength="20" id="location" name="location" cols="30" rows="1"
-                    placeholder="in Space"></textarea>
+                <input type="text" name="location">
+                {% for location in tag_locations|title %}
+                <datalist id="location" name="location" value="{{location.location}}">{{location.location}}</datalist>
+                {% endfor %}
             </div>
         </div>
     </div>

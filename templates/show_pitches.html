@@ -5,25 +5,24 @@
 {{ text[0]|upper}}{{text[1:] }}
 {% endmacro %}
 
-{% if is_anonymous %}
-<p>wkjebkjwbec</p>
-{% endif %}
+
 
 <div class="row">
-    <div class="col-12 flash-del">
+    <div class="col-4">
+        <form action="{{ url_for('delete_pitch') }}" method="POST">
+            <button class="alert alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
+        </form>
+    </div>
+    <div class="col-4 flash-del">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
-        <h3>{{ message }}</h3>
+        <h5>{{ message }}</h5>
         {% endfor %}
         {% endif %}
         {% endwith %}
     </div>
 </div>
-
-<form action="{{ url_for('delete_pitch') }}" method="POST">
-    <button class="alert alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
-</form>
 
 <div class="container row">
     <div class="col-12">
@@ -55,62 +54,66 @@
     {% for pitch in pitches %}
     {% if pitch.is_del == false and pitch.username == session['username'] %}
     <hr style="border: 2px dashed black">
-    <div class="pitch-collection">
-        <div class="col-12">
-            <form action="{{ url_for('is_greenlit', pitch_id=pitch._id) }}" method="POST">
-                <button type="submit">SUBMIT</button>
-            </form>
-        </div>
+    <div class="pitch-collection {{ 'greenlit' if pitch.is_greenlit == 1 else 'rejected' }}">
+        <p class="offset-10">{{ pitch.is_greenlit }}</p>
         <div class="row">
             <div class="col-2">
-                <button type="button"><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit this
-                        pitch</a></button>
+                <button type="button"><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
             </div>
-            <div class="col-1">
+            <div class="col-2">
                 <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
-                    <button type="submit">Remove this pitch</button>
+                    <button type="submit">Remove</button>
                 </form>
             </div>
-            <br>
-            <br>
-            <div class="row">
-                <div class="col-12">
-                    <h3 class="title">{{ pitch.title|title }}</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <p>
-                        {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
-                        {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
-                        {{ pitch.actor }}.
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <p>{{ sentence_case(pitch.description) }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
-                </div>
-                <div class="col-12">
-                    <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
-                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                        height="100px">
-                    <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
-                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                        height="100px">
-                    <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
-                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                        height="100px">
-                </div>
+            <div class="col-2">
+                <form action="{{ url_for('is_greenlit', pitch_id=pitch._id) }}" method="POST">
+                    {% if pitch.is_greenlit == 1 %}
+                    <button type="submit" disabled>SUBMIT</button>
+                    {% else %}
+                    <button type="submit">SUBMIT</button>
+                    {% endif %}
+                </form>
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="title">{{ pitch.title|title }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>
+                    {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
+                    {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
+                    {{ pitch.actor }}.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>{{ sentence_case(pitch.description) }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
+            </div>
+            <div class="col-12">
+                <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
+                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                    height="100px">
+                <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
+                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                    height="100px">
+                <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
+                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                    height="100px">
+            </div>
+        </div>
     </div>
+    {% endif %}
+    {% endfor %}
+</div>
 
-    {% endblock %}
+{% endblock %}
