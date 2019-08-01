@@ -32,6 +32,7 @@
     <div class="col-12">
         {% if session['username'] %}
         <h4>Welcome {{ session['username']|title }}.</h4>
+        <button><a href="{{ url_for('show_pitches', sort_field='created_at') }}">Go to own pitches</a></button>
         {% else %}
         <button type="button"><a href="{{ url_for('index') }}">Hello non logged in user, log in FFS!!!</a></button>
         {% endif %}
@@ -39,9 +40,9 @@
     <br>
     <br>
     <div class="col-12">
-        <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button>
-        <button><a href="{{ url_for('show_pitches', sort_field='created_at') }}">Sort by votes</a></button>
-        <button type="button"><a href="{{ url_for('show_pitches', sort_field='last_modified') }}">Sort by last
+        <!-- <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button> -->
+        <button><a href="{{ url_for('show_all_pitches', sort_field='created_at') }}">Sort by votes</a></button>
+        <button type="button"><a href="{{ url_for('show_all_pitches', sort_field='last_modified') }}">Sort by last
                 update</a></button>
     </div>
 </div>

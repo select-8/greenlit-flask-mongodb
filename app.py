@@ -1,4 +1,6 @@
 import os
+import random
+from random import randint
 from flask import Flask, render_template, redirect, request, session, url_for, flash
 from flask_pymongo import PyMongo, pymongo
 from bson.objectid import ObjectId
@@ -15,6 +17,18 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
+_users = mongo.db.users
+users = _users.find()
+_pitches = mongo.db.pitches
+_genres = mongo.db.genres
+_directors = mongo.db.directors
+_actors = mongo.db.talent
+_tags = mongo.db.tags
+tags = _tags.find()
+
+created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
+last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -22,9 +36,8 @@ def index():
 @app.route('/login', methods=['POST'])
 def login():
     error = None
-    users = mongo.db.users
-    login_user = users.find_one({'username' : request.form['username']})
-
+    # users = mongo.db.users
+    login_user = _users.find_one({'username' : request.form['username']})
     if login_user:
         if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['username'] = request.form['username']
@@ -38,8 +51,8 @@ def login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
-        users = mongo.db.users
-        existing_user = users.find_one({'username' : request.form['username']})
+        # users = mongo.db.users
+        existing_user = _users.find_one({'username' : request.form['username']})
         if existing_user is None:
             hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
             users.insert({'username' : request.form['username'], 'password' : hashpass})
@@ -47,6 +60,7 @@ def register():
             return redirect(url_for('index'))
         return 'That username already exists!'
     return render_template('register.html')
+
 
 """
 should show session user and list of pitches with option to edit
@@ -56,27 +70,25 @@ and maybe to add a profile?
 @app.route('/show_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/show_pitches/<sort_field>')
 def show_pitches(sort_field):
-    pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
-    tags = mongo.db.tags.find()
+    pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     username = session.get('username')
-    users = mongo.db.users.find()
-    count = mongo.db.pitches.count({'username' : username})
+    count = _pitches.count({'username' : username})
     if session.get('logged_in') == True:
         return render_template("show_pitches.html", pitches=pitches, tags=tags, users=users, count=count)
-    return redirect(url_for('show_all_pitches'))
+    else:
+        return redirect(url_for('show_all_pitches'))
 
 @app.route('/show_all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/show_all_pitches/<sort_field>')
 def show_all_pitches(sort_field):
-    pitches = mongo.db.pitches.find().sort(sort_field, pymongo.DESCENDING)
-    tags = mongo.db.tags.find()
+    pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     return render_template("show_all_pitches.html", pitches=pitches, tags=tags)
 
 
 @app.route('/show_users')
 def show_users():
     usercoll = mongo.db.users
-    username = session['username']
+    username = session.get('username')
     the_user = usercoll.find_one({'username': username})
     return render_template("show_users.html", user=the_user)
 
@@ -98,8 +110,8 @@ def add_pitch():
 
 @app.route('/insert_pitch', methods=['POST'])
 def insert_pitch():
-    created_at = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    last_modified = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    # created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
+    # last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
     usercoll = mongo.db.users
     username = session['username']
     the_user = usercoll.find_one({'username': username})
@@ -154,7 +166,7 @@ def edit_pitch(pitch_id):
 def update_pitch(pitch_id):
     pitches = mongo.db.pitches
     tags = mongo.db.tags
-    last_modified = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    # last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
     pitches.update( {'_id': ObjectId(pitch_id)},
     {"$set": {
         'title':request.form.get('title'),
@@ -173,6 +185,47 @@ def update_pitch(pitch_id):
         }
     })
     return redirect(url_for('show_pitches'))
+
+@app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
+def is_greenlit(pitch_id):
+    random_is_greenlit = randint(0,1)
+    bad_actor = _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0})
+    for k, v in bad_actor.items():
+        if v in ['Matt Damon']:
+            _pitches.update( {'_id': ObjectId(pitch_id)},
+            {"$set": {'is_greenlit':0}})
+            flash('no way lad, not Matt Damon')
+        else:
+            _pitches.update( {'_id': ObjectId(pitch_id)},
+            {"$set": {'is_greenlit':randint(0,1)}})
+            flash("how did you do?")
+    return redirect(url_for('show_pitches'))
+
+    # if _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0}) == 'Matt Damon'
+    #     and _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0}) == 'Coen Brothers':
+    #     pitches.update( {'_id': ObjectId(pitch_id)},
+    #     {"$set": {
+    #         'is_greenlit':0
+    #     }})
+    #     flash('no way lad')
+    # elif _pitches.find_one({'director_name', 1},{'_id':ObjectId(pitch_id)}) == 'David O Russell':
+    #     pitches.update( {'_id': ObjectId(pitch_id)},
+    #     {"$set": {
+    #         'is_greenlit':0
+    #     }})
+    #     flash("are you fucking nuts, he's cancelled!")
+    # else:
+    #     {"$set": {
+    #         'is_greenlit':random_is_greenlit
+    #     }})
+    #     flash("how did you do?")
+
+@app.route('/test')
+def test():
+    test1 = _pitches.find_one({'_id':ObjectId('5d42b06df4913bbe40fb075d')},{'actor': 1, '_id': 0})
+    for k, v in test1.items():
+        return v
+
 
 @app.route('/hide_pitch/<pitch_id>', methods=["POST"])
 def hide_pitch(pitch_id):
