@@ -54,7 +54,7 @@
     <hr style="border: 2px dashed black">
     <div class="pitch-collection">
         <div class="col-2">
-            <form action="{{ url_for('votes', pitch_id=pitch._id) }}" method="POST">
+            <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
                 <button type="submit">Vote</button>
             </form>
         </div>

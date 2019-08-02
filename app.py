@@ -82,8 +82,9 @@ def show_pitches(sort_field):
 @app.route('/show_all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/show_all_pitches/<sort_field>')
 def show_all_pitches(sort_field):
+    votes = _votes.find_one()
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
-    return render_template("show_all_pitches.html", pitches=pitches, tags=tags)
+    return render_template("show_all_pitches.html", pitches=pitches, tags=tags, votes=votes)
 
 
 @app.route('/show_users')
@@ -208,27 +209,55 @@ def is_greenlit(pitch_id):
                 flash("how did you do?")
     return redirect(url_for('show_pitches'))
 
-@app.route('/votes/<pitch_id>', methods=["POST", "GET"])
-def votes(pitch_id):
-    current_user = session.get('username')
-    if _votes.find_one({'pitch_id': ObjectId(pitch_id)}):
-        pass
-        _votes.update({ 'pitch_id': ObjectId(pitch_id) },{'$push': { 'voters': current_user }, "$inc": {'votes': 1} } )
-    else:
-        _votes.insert(
-            { 'pitch_id': ObjectId(pitch_id), 'voters': [current_user], 'votes': 1 })
+@app.route('/new_votes/<pitch_id>', methods=["POST", "GET"])
+def new_votes(pitch_id):
+    pitch_in_votes = _votes.count({'pitch_id': ObjectId(pitch_id)})
 
+    if pitch_in_votes == 0:
+        _votes.insert_one({ 'pitch_id': ObjectId(pitch_id), 'voters': [] } )
 
-
-    # owner = _pitches.find_one({'_id':ObjectId(pitch_id)}, {'username': 1, '_id' : 0})
-    # if not _votes.find({'_id':ObjectId(pitch_id)}):
-    #     _votes.insert({'pitch_id': pitch_id, 'owner': owner})
-    
-    #     _pitches.update( {'_id': ObjectId(pitch_id)},
-    #     {"$inc": {'votes': 1}
-    #     })
-    
     return redirect(url_for('show_all_pitches'))
+
+
+@app.route('/up_votes/<pitch_id>', methods=["POST", "GET"])
+def up_votes(pitch_id):
+    current_user = session.get('username')
+    pitch_in_votes = _votes.count({'pitch_id': ObjectId(pitch_id)})
+    voters = _votes.find_one({'pitch_id':ObjectId(pitch_id)})
+
+    if pitch_in_votes == 0:
+        _votes.insert_one({ 'pitch_id': ObjectId(pitch_id), 'voters': [current_user] } )
+    elif pitch_in_votes > 0 and current_user in voters['voters']:
+        _votes.update(
+            {'pitch_id': ObjectId(pitch_id) },
+            {'$pull': { 'voters': current_user } }
+            )
+    else:
+        _votes.update(
+            {'pitch_id': ObjectId(pitch_id) },
+            {'$push': { 'voters': current_user } }
+            )
+    return redirect(url_for('show_all_pitches'))
+
+
+
+
+    # if pitch_in_votes and current_user not in user_in_vote:
+    #     _votes.update(
+    #         { 'pitch_id': ObjectId(pitch_id) },
+    #         {'$push': { 'voters': current_user } } )
+    #     _pitches.update(
+    #         {'_id': ObjectId(pitch_id) },
+    #         {"$inc": {'votes': 1} } )
+    # else:
+    #     _votes.insert(
+    #         { 'pitch_id': ObjectId(pitch_id), 
+    #         'voters': [current_user] } )
+    #     _pitches.update(
+    #         {'_id': ObjectId(pitch_id) },
+    #         {"$inc": {'votes': -1} } )
+    
+    # return redirect(url_for('show_all_pitches'))
 
 
 
