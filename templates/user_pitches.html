@@ -41,10 +41,10 @@
     <br>
     <div class="col-12">
         <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button>
-        <button><a href="{{ url_for('show_pitches', sort_field='created_at') }}">Sort by votes</a></button>
-        <button type="button"><a href="{{ url_for('show_pitches', sort_field='last_modified') }}">Sort by last
+        <button><a href="{{ url_for('user_pitches', sort_field='votes') }}">Sort by votes</a></button>
+        <button type="button"><a href="{{ url_for('user_pitches', sort_field='last_modified') }}">Sort by last
                 updated</a></button>
-        <button type="button"><a href="{{ url_for('show_all_pitches', sort_field='last_modified') }}">Show all
+        <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Show all
                 pitches</a></button>
     </div>
 </div>
@@ -55,7 +55,7 @@
     {% if pitch.is_del == false and pitch.username == session['username'] %}
     <hr style="border: 2px dashed black">
     <div class="pitch-collection {{ 'greenlit' if pitch.is_greenlit == 1 else 'rejected' }}">
-        <p class="offset-10">{{ pitch.is_greenlit }}</p>
+        <!-- <p class="offset-10">{{ pitch.is_greenlit }}</p> -->
         <div class="row">
             <div class="col-2">
                 <button type="button"><a href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
@@ -73,6 +73,9 @@
                     <button type="submit">SUBMIT</button>
                     {% endif %}
                 </form>
+            </div>
+            <div class="col-2">
+                <p>Votes : {{ pitch.votes }}</p>
             </div>
         </div>
         <br>

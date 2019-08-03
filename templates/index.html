@@ -7,7 +7,7 @@
 <h3>Welcome to our site {{ session['username']|title }}</h3>
 <br>
 <div class="row">
-    <button><a href="{{ url_for('show_pitches') }}">View your pitches</a></button>
+    <button><a href="{{ url_for('all_pitches') }}">View your pitches</a></button>
 </div>
 <br>
 <div class="row">
@@ -38,7 +38,7 @@
 {% endif %}
 
 <div>
-        <button><a href="{{ url_for('show_all_pitches') }}">View All Pitches</a></button>
+        <button><a href="{{ url_for('all_pitches') }}">View All Pitches</a></button>
     </div>
 
 {% endblock %}
