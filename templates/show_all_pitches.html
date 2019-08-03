@@ -40,8 +40,7 @@
     <br>
     <br>
     <div class="col-12">
-        <!-- <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button> -->
-        <button><a href="{{ url_for('show_all_pitches', sort_field='created_at') }}">Sort by votes</a></button>
+        <button><a href="{{ url_for('show_all_pitches', sort_field='votes') }}">Sort by votes</a></button>
         <button type="button"><a href="{{ url_for('show_all_pitches', sort_field='last_modified') }}">Sort by last
                 update</a></button>
     </div>
@@ -53,10 +52,19 @@
     {% if pitch.is_del == false %}
     <hr style="border: 2px dashed black">
     <div class="pitch-collection">
-        <div class="col-2">
-            <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
-                <button type="submit">Vote</button>
-            </form>
+        <div class="row">
+            <div class="col-2">
+                <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
+                    {% if session['username'] == pitch.username %}
+                    <button type="submit" disabled>No Vote</button>
+                    {% else %}
+                    <button type="submit">Vote</button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="col-2 offset-md-8">
+                <p>Votes : {{ pitch.votes }}</p>
+            </div>
         </div>
         <br>
         <div class="row">
