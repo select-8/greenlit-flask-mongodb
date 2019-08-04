@@ -1,44 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>GREENLIT PRODUCTIONS</h2>
-
+<!-- <h2 class="text-center">GREENLIT</h2> -->
+<br>
 {% if session['username'] %}
 <h3>Welcome to our site {{ session['username']|title }}</h3>
 <br>
-<div class="row">
-    <button><a href="{{ url_for('all_pitches') }}">View your pitches</a></button>
-</div>
-<br>
-<div class="row">
-        <button><a href="{{ url_for('add_pitch') }}">Add a new pitch</a></button>
-    </div>
+
 {% else %}
-<h3>Welcome to our site please login below</h3>
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form method=POST action="{{ url_for('login') }}">
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Username</label>
-                    <input type="text" class="form-control" name="username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" name="pass" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Log In</button>
-            </form>
-        </div>
-    </div>
-</div>
-<div>
-    Don't have an account? <a href="{{ url_for('register') }}">Sign up here</a>.
+<div class="div">
+    <p>Register and become a member to add your own pitches, or <a href="{{ url_for('all_pitches') }}">browse current
+            pitches</a></p>
 </div>
 {% endif %}
-
-<div>
-        <button><a href="{{ url_for('all_pitches') }}">View All Pitches</a></button>
-    </div>
 
 {% endblock %}

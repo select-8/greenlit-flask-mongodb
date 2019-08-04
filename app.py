@@ -34,20 +34,19 @@ last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 def index():
     return render_template('index.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
-    # users = mongo.db.users
-    login_user = _users.find_one({'username' : request.form['username']})
-    if login_user:
+    if request.method == 'POST':
+        login_user = _users.find_one({'username' : request.form['username']})
         if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['username'] = request.form['username']
             session['logged_in'] = True
-            return redirect(url_for('show_pitches'))
+            return redirect(url_for('user_pitches'))
         return 'Invalid Password'
-    #     return render_template('login.html', error = error)
-    # return 'Invalid Username'
-    return render_template('index.html', error = error)
+    # return render_template('login.html', error = error)
+        return 'Invalid Username'
+    return render_template('login.html', error = error)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -62,29 +61,28 @@ def register():
         return 'That username already exists!'
     return render_template('register.html')
 
+@app.route('/logout')
+def logout():
+   session.pop('username', None)
+   return redirect(url_for('index'))
 
-"""
-should show session user and list of pitches with option to edit
-and maybe to add a profile?
-"""
-
-@app.route('/show_pitches', defaults={'sort_field': 'last_modified'})
-@app.route('/show_pitches/<sort_field>')
-def show_pitches(sort_field):
+@app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
+@app.route('/user_pitches/<sort_field>')
+def user_pitches(sort_field):
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     username = session.get('username')
     count = _pitches.count({'username' : username})
     if session.get('logged_in') == True:
-        return render_template("show_pitches.html", pitches=pitches, tags=tags, users=users, count=count)
+        return render_template("user_pitches.html", pitches=pitches, tags=tags, users=users, count=count)
     else:
-        return redirect(url_for('show_all_pitches'))
+        return redirect(url_for('all_pitches'))
 
-@app.route('/show_all_pitches', defaults={'sort_field': 'last_modified'})
-@app.route('/show_all_pitches/<sort_field>')
-def show_all_pitches(sort_field):
+@app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
+@app.route('/all_pitches/<sort_field>')
+def all_pitches(sort_field):
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     votes = _votes.find_one()
-    return render_template("show_all_pitches.html", pitches=pitches, tags=tags, votes=votes)
+    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes)
 
 
 @app.route('/show_users')
@@ -137,14 +135,15 @@ def insert_pitch():
                     'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
                     'is_del':False, 'votes':0
                     })
-    return redirect(url_for('add_pitch'))
+    # return redirect(url_for('insert_vote'))
+    return redirect(url_for('all_pitches'))
     # find_one_and_update
 
-@app.route('/insert_vote', methods=["POST", "GET"])
-def insert_vote():
-    lastest_pitch = _pitches.find({},{"_id": 1, 'username': 1}).sort({ "_id": -1 }).limit(1);
-    _votes.insert_one({lastest_pitch})
-    return redirect(url_for('show_all_pitches'))
+# @app.route('/insert_vote', methods=["POST", "GET"])
+# def insert_vote():
+#     lastest_pitch = _pitches.find({},{"_id": 1, 'username': 1}).sort("created_at", -1).limit(1);
+#     _votes.insert(lastest_pitch)
+#     return redirect(url_for('all_pitches'))
 
 
 @app.route('/edit_pitch/<pitch_id>')
@@ -191,7 +190,7 @@ def update_pitch(pitch_id):
         'is_del':False
         }
     })
-    return redirect(url_for('show_pitches'))
+    return redirect(url_for('user_pitches'))
 
 
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
@@ -213,7 +212,7 @@ def is_greenlit(pitch_id):
                 _pitches.update( {'_id': ObjectId(pitch_id)},
                 {"$set": {'is_greenlit':randint(0,1)}})
                 flash("how did you do?")
-    return redirect(url_for('show_pitches'))
+    return redirect(url_for('user_pitches'))
 
 
 @app.route('/up_votes/<pitch_id>', methods=["POST", "GET"])
@@ -239,9 +238,9 @@ def up_votes(pitch_id):
                 {'pitch_id': ObjectId(pitch_id) },
                 {'$push': { 'voters': current_user } } )
             _pitches.update({'_id': ObjectId(pitch_id) },{"$inc": {'votes': 1} } )
-        return redirect(url_for('show_all_pitches') )
+        return redirect(url_for('all_pitches') )
     flash('Please log in or register to vote')
-    return redirect(url_for('show_all_pitches') )
+    return redirect(url_for('all_pitches') )
 
 
 @app.route('/hide_pitch/<pitch_id>', methods=["POST"])
@@ -252,7 +251,7 @@ def hide_pitch(pitch_id):
         'is_del':True
     }})
     flash('Your pitch has been removed from further consideration!')
-    return redirect(url_for('show_pitches'))
+    return redirect(url_for('user_pitches'))
 
 
 @app.route('/delete_pitch', methods=["POST"])
@@ -260,7 +259,7 @@ def delete_pitch():
     pitches = mongo.db.pitches
     pitches.remove({'is_del': True})
     flash('Hey Admin, you have flushed out the deleted pitches!')
-    return redirect(url_for('show_pitches'))
+    return redirect(url_for('user_pitches'))
 
 
 if __name__ == '__main__':

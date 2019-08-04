@@ -14,6 +14,9 @@ textarea .dt {
 .flash-del h5 {
   padding: 0;
   margin: 0;
+  text-decoration: underline;
+  text-decoration-color: darkred;
+  text-align: center;
 }
 
 .rejected {
@@ -22,4 +25,18 @@ textarea .dt {
 
 .greenlit {
   background-color: rgba(93, 173, 36, .15)
+}
+
+.admin-flush {
+  border: 5px solid;
+  margin-top: 20px;
+  float: right;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.pitch-title p {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 2.25rem;
+  letter-spacing: .25rem;
+  padding-top: 5px;
 }

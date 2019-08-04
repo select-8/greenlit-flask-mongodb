@@ -16,35 +16,41 @@
     </div>
 </div>
 
-<div class="container row">
+<div class="row">
 
     {% if session['username'] %}
-    <h4>Welcome {{ session['username']|title }}.</h4>
-    <div class="row">
-        <div class="col-4">
-            <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Go to own pitches</a></button>
-            {% else %}
-            <button type="button"><a href="{{ url_for('index') }}">Log in FFS!!!</a></button>
-            {% endif %}
-            <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-            <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                    update</a></button>
-            <div class="col-4 flash-del">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                {% for message in messages %}
-                <h5>{{ message }}</h5>
-                {% endfor %}
-                {% endif %}
-                {% endwith %}
-            </div>
-        </div>
+    <!-- <div class="row">
+        <div class="col-2"></div>
+        <h5>Welcome {{ session['username']|title }}.</h5>
+    </div> -->
+    <div class="col-4">
+        <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Welcome
+                {{ session['username']|title }}, view your pitches</a></button>
+        {% else %}
+        <button type="button"><a href="{{ url_for('index') }}">Log in!!!</a></button>
+        {% endif %}
     </div>
-    <!-- <div class="col-12">
+    <div class="col-6">
         <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
         <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
                 update</a></button>
-    </div> -->
+    </div>
+    <div class="flash-del">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <h5>{{ message }}</h5>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+</div>
+<!-- <div class="col-12">
+    <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
+    <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
+            update</a></button>
+</div> -->
 </div>
 
 <div class="container" id="make-reorderable-by-rating">
@@ -54,16 +60,18 @@
     <hr style="border: 2px dashed black">
     <div class="pitch-collection">
         <div class="row">
-            <div class="col-2">
+            <div class="col-3">
                 <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
                     {% if session['username'] == pitch.username %}
                     <button type="submit" disabled>No Vote</button>
+                    {% elif not session['username'] %}
+                    <button type="submit" disabled>Please login to vote</button>
                     {% else %}
                     <button type="submit">Vote</button>
                     {% endif %}
                 </form>
             </div>
-            <div class="col-2 offset-md-8">
+            <div class="col-2 offset-md-7 d-flex justify-content-end">
                 <p>Votes : {{ pitch.votes }}</p>
             </div>
         </div>
