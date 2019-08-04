@@ -6,113 +6,111 @@
 {{ text[0]|upper}}{{text[1:] }}
 {% endmacro %}
 
-<div class="row">
-    <div class="col-4 pitch-title">
-        <p>All Pitches</p>
-    </div>
-    <div class="col-4 offset-md-4">
-        <form action="{{ url_for('delete_pitch') }}" method="POST">
-            <button class="admin-flush alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
-        </form>
-    </div>
-</div>
+<div class="container">
 
-<div class="row">
-    {% if session['username'] %}
+    <div class="row">
+        <div class="col-4 pitch-title">
+            <p>All Pitches</p>
+        </div>
+        <div class="col-4 offset-md-4">
+            <form action="{{ url_for('delete_pitch') }}" method="POST">
+                <button class="admin-flush alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
+            </form>
+        </div>
+    </div>
 
-    <div class="col-4">
-        <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Welcome
-                {{ session['username']|title }}, view your pitches</a></button>
-    </div>
-    {% endif %}
-    <div class="col-6">
-        <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-        <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                update</a></button>
-    </div>
-    <div class="flash-del">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <h5>{{ message }}</h5>
-        {% endfor %}
+    <div class="row">
+        {% if session['username'] %}
+
+        <div class="col-4">
+            <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Welcome
+                    {{ session['username']|title }}, view your pitches</a></button>
+        </div>
         {% endif %}
-        {% endwith %}
+        <div class="col-6">
+            <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
+            <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
+                    update</a></button>
+        </div>
+        <div class="flash-del">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <h5>{{ message }}</h5>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
     </div>
 
-</div>
-<!-- <div class="col-12">
-    <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-    <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-            update</a></button>
-</div> -->
-</div>
-
-<div class="container" id="make-reorderable-by-rating">
-    {# https://shubhamjain.co/til/capitalizing-first-letter-in-jinja/ #}
-    {% for pitch in pitches %}
-    {% if pitch.is_del == false %}
-    <hr style="border: 2px dashed black">
-    <div class="pitch-collection">
-        <div class="row">
-            <div class="col-3">
-                <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
-                    {% if session['username'] == pitch.username %}
-                    <button type="submit" disabled>No Vote</button>
-                    {% elif not session['username'] %}
-                    <button type="submit" disabled>Please login to vote</button>
-                    {% else %}
-                    <button type="submit">Vote</button>
-                    {% endif %}
-                </form>
-            </div>
-            <div class="col-2 offset-md-7 d-flex justify-content-end">
-                <p>Votes : {{ pitch.votes }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <h3 class="title">{{ pitch.title|title }}</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <p>
-                    {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
-                    {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
-                    {{ pitch.actor }}.
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <p>{{ sentence_case(pitch.description) }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
-            </div>
-            <div class="col-12">
-                <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
-                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                    height="100px">
-                <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
-                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                    height="100px">
-                <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
-                    onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                    height="100px">
+    <div id="make-reorderable-by-rating">
+        {% for pitch in pitches %}
+        {% if pitch.is_del == false %}
+        <div class="pitch-collection">
+            <div id="borderimg1">
+                <div class="row vote-block">
+                    <div class="col-3">
+                        <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
+                            {% if session['username'] == pitch.username %}
+                            <button type="submit" disabled>No Vote</button>
+                            {% elif not session['username'] %}
+                            <button type="submit" disabled>Please login to vote</button>
+                            {% else %}
+                            <button type="submit">Vote</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    <div class="col-2 offset-md-7 d-flex justify-content-end vote-count">
+                        <span
+                            class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == 1 else 'rejected' }}">{{ pitch.votes }}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class="title">{{ pitch.title|title }}</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p>
+                            {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
+                            {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
+                            {{ pitch.actor }}.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p>{{ sentence_case(pitch.description) }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
+                    </div>
+                    <div class="col-12">
+                        <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
+                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                            height="100px">
+                        <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
+                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                            height="100px">
+                        <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
+                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                            height="100px">
+                    </div>
+                </div>
             </div>
         </div>
+        {% endif %}
+        {% endfor %}
     </div>
-    {% endif %}
-    {% endfor %}
 </div>
 
 {% endblock %}

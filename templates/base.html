@@ -6,6 +6,7 @@
         type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
+    <script type="text/javascript" href="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 {% block title %}
 <title>GREENLIT</title>
@@ -14,9 +15,8 @@
 {% block nav %}
 
 <body>
-    <div class="container"></div>
 
-    <div class="container">
+    <div class="container-fluid">
         {% set navbar_in = [
                             ('/', 'index', 'Home'),
                             ('/user_pitches', 'user_pitches', 'Your Pitches'),
@@ -40,21 +40,18 @@
             <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
                 {% if session['username'] %}
                 {% for link, id, text in navbar_in %}
-
                 <ul class="navbar-nav">
                     <li {% if id == active_page %} class="nav-item active" {% endif %}>
                         <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
                 </ul>
-
                 {% endfor %}
                 {% else %}
                 {% for link, id, text in navbar_out %}
                 <ul class="navbar-nav">
                     <li {% if id == active_page %} class="nav-item active" {% endif %}>
-                <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
                 </ul>
                 {% endfor %}
-
                 {% endif %}
             </div>
         </nav>
@@ -62,7 +59,7 @@
 
     {% endblock nav %}
 
-    <div class="container">
+    <div class="container-fluid">
         {% block content %}
         {% endblock content %}
     </div>
