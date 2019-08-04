@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% set active_page = "index" %}
 {% block content %}
 
 <!-- <h2 class="text-center">GREENLIT</h2> -->
 <br>
 {% if session['username'] %}
 <h3>Welcome to our site {{ session['username']|title }}</h3>
+    {% if count == 0 %}
+    <p>Ready to add your first <a href="{{ url_for('add_pitch') }}">Pitch?</a></p>
+    {% endif %}
 <br>
 
 {% else %}

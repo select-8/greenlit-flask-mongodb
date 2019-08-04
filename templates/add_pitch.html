@@ -88,12 +88,23 @@
             <button type="submit" action="{{ url_for('insert_pitch') }}">Add Your Pitch
             </button>
         </div>
+
         <br>
         <div>
             <button><a href="{{ url_for('user_pitches') }}">View Your Pitches</a></button>
         </div>
     </div>
 </form>
+
+<div class="flash-del">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <h5>{{ message }}</h5>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
 
 
 {% endblock %}

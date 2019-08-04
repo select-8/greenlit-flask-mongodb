@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% set active_page = "all_pitches" %}
 {% block content %}
 
 {% macro sentence_case(text) %}
@@ -17,19 +18,13 @@
 </div>
 
 <div class="row">
-
     {% if session['username'] %}
-    <!-- <div class="row">
-        <div class="col-2"></div>
-        <h5>Welcome {{ session['username']|title }}.</h5>
-    </div> -->
+
     <div class="col-4">
         <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Welcome
                 {{ session['username']|title }}, view your pitches</a></button>
-        {% else %}
-        <button type="button"><a href="{{ url_for('index') }}">Log in!!!</a></button>
-        {% endif %}
     </div>
+    {% endif %}
     <div class="col-6">
         <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
         <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last

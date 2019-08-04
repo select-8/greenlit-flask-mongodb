@@ -2,15 +2,35 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }} "
+        type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
 </head>
+{% block title %}
 <title>GREENLIT</title>
+{% endblock title %}
+
+{% block nav %}
 
 <body>
+    <div class="container"></div>
+
     <div class="container">
+        {% set navbar_in = [
+                            ('/', 'index', 'Home'),
+                            ('/user_pitches', 'user_pitches', 'Your Pitches'),
+                            ('/all_pitches', 'all_pitches', 'All Pitches'),
+                            ('/logout', 'logout', 'Logout')
+                            ] -%}
+
+        {% set navbar_out = [
+            ('/', 'index', 'Home'),
+            ('/all_pitches', 'all_pitches', 'All Pitches'),
+            ('/login', 'login', 'Log In'),
+            ('/register', 'register', 'Register')
+            ] -%}
+
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Greenlit</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -18,27 +38,39 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{{ url_for( 'index' ) }}">Home <span class="sr-only">(current)</span></a>
-                    {% if session['username'] %}
-                    <a class="nav-item nav-link" href="{{ url_for('user_pitches') }}">Your Pitches</a>
-                    <a class="nav-item nav-link" href="{{ url_for('all_pitches') }}">All Pitches</a>
-                    <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    {% else %}
-                    <a class="nav-item nav-link" href="{{ url_for( 'login' ) }}">Log In</a>
-                    <a class="nav-item nav-link" href="{{ url_for( 'register' ) }}">Register</a>
-                    {% endif %}
-                </div>
+                {% if session['username'] %}
+                {% for link, id, text in navbar_in %}
+
+                <ul class="navbar-nav">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+
+                {% endfor %}
+                {% else %}
+                {% for link, id, text in navbar_out %}
+                <ul class="navbar-nav">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {% endfor %}
+
+                {% endif %}
             </div>
         </nav>
     </div>
+
+    {% endblock nav %}
+
     <div class="container">
-        {% block content %} {% endblock %}
+        {% block content %}
+        {% endblock content %}
     </div>
 
     <!-- Bootstrap core JavaScript -->
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
 </body>
 
 </html>

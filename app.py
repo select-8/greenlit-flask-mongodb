@@ -1,13 +1,14 @@
 import os
 import random
+import json
+import bcrypt
 from random import randint
 from flask import Flask, render_template, redirect, request, session, url_for, flash
 from flask_pymongo import PyMongo, pymongo
 from bson.objectid import ObjectId
 from bson import json_util
-import json
 from datetime import date, datetime
-import bcrypt
+
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET", "randomstring123")
@@ -32,7 +33,10 @@ last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    error = None
+    username = session.get('username')
+    count = _pitches.count({'username' : username})
+    return render_template('index.html', count=count)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -55,7 +59,7 @@ def register():
         existing_user = _users.find_one({'username' : request.form['username']})
         if existing_user is None:
             hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
-            users.insert({'username' : request.form['username'], 'password' : hashpass})
+            _users.insert({'username' : request.form['username'], 'password' : hashpass})
             session['username'] = request.form['username']
             return redirect(url_for('index'))
         return 'That username already exists!'
@@ -136,7 +140,8 @@ def insert_pitch():
                     'is_del':False, 'votes':0
                     })
     # return redirect(url_for('insert_vote'))
-    return redirect(url_for('all_pitches'))
+    flash('your pitch has been added')
+    return redirect(url_for('add_pitch'))
     # find_one_and_update
 
 # @app.route('/insert_vote', methods=["POST", "GET"])
