@@ -19,26 +19,12 @@
         </div>
     </div>
 
-
-
     <div class="row">
+
         <div class="col-4">
-            <form>
-                <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
-                    <option value="" disabled selected>Filter by Genre</option>
-                    {% for genre in genres %}
-                    <option value="{{ url_for('filter_genre', sort_field='created_at', gfilter=genre.genre_name )}}">
-                        {{ genre.genre_name }}</option>
-                    {% endfor %}
-                </select>
-            </form>
+            <button><a href="{{ url_for('user_pitches', sort_field='last_modified') }}">Go back to your Pitches</a></button>
         </div>
 
-        <div class="col-6">
-            <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-            <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                    update</a></button>
-        </div>
         <div class="flash-del">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -52,7 +38,7 @@
     </div>
 
     <div id="make-reorderable-by-rating">
-        {% for pitch in pitches %}
+        {% for pitch in pitches_by_status %}
         {% if pitch.is_del == false %}
         <div class="pitch-collection">
             <div id="borderimg1">

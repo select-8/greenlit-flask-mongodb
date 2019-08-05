@@ -15,6 +15,7 @@
             <button class="alert alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
         </form>
     </div>
+
     <div class="col-4 flash-del">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -50,6 +51,18 @@
                 pitches</a></button>
     </div>
 </div>
+
+<div class="col-4">
+        <form>
+            <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
+                <option value="" disabled selected>Filter by Status</option>
+                {% for status in statuses %}
+                <option value="{{ url_for('filter_status', sort_field='created_at', sfilter=status.is_greenlit )}}">
+                    {{ status.is_greenlit }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
 
 <div class="container" id="make-reorderable-by-rating">
     {% for pitch in pitches %}

@@ -75,11 +75,20 @@ def logout():
 def user_pitches(sort_field):
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     username = session.get('username')
+    status = mongo.db.status.find()
     count = _pitches.count({'username' : username})
     if session.get('logged_in') == True:
-        return render_template("user_pitches.html", pitches=pitches, tags=tags, users=users, count=count)
+        return render_template("user_pitches.html", pitches=pitches, tags=tags, users=users, count=count, statuses=status)
     else:
         return redirect(url_for('all_pitches'))
+
+
+@app.route('/filter_status', defaults={'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
+@app.route('/filter_status/<sfilter>/<sort_field>')
+def filter_status(sfilter, sort_field):
+    pitch_by_status = _pitches.find({'is_greenlit': sfilter}).sort(sort_field, pymongo.DESCENDING)
+    return render_template("filter_status.html", pitches_by_status=pitch_by_status)
+
 
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/all_pitches/<sort_field>')
@@ -88,15 +97,14 @@ def all_pitches(sort_field):
     votes = _votes.find_one()
     genres = _genres.find()
     status = mongo.db.status.find()
-    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes, genres=genres, statuses=status)
+    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes, genres=genres)
 
 
-@app.route('/filter_pitch', defaults={'filter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
-@app.route('/filter_pitch/<filter>/<sort_field>')
-def filter_pitch(filter, sort_field):
-    pitch_by_genre = _pitches.find({'genre_name': filter}).sort(sort_field, pymongo.DESCENDING)
-    pitch_by_status = _pitches.find({'is_greenlit': filter}).sort(sort_field, pymongo.DESCENDING)
-    return render_template("filtered_views.html", pitches_by_genre=pitch_by_genre, pitches_by_status=pitch_by_status)
+@app.route('/filter_genre', defaults={'gfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
+@app.route('/filter_genre/<gfilter>/<sort_field>')
+def filter_genre(gfilter, sort_field):
+    pitch_by_genre = _pitches.find({'genre_name': gfilter}).sort(sort_field, pymongo.DESCENDING)
+    return render_template("filter_genre.html", pitches_by_genre=pitch_by_genre)
 
 
 @app.route('/show_users')

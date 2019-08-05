@@ -20,13 +20,11 @@
     </div>
 
     <div class="row">
-        {% if session['username'] %}
 
         <div class="col-4">
-            <button><a href="{{ url_for('user_pitches', sort_field='created_at') }}">Welcome
-                    {{ session['username']|title }}, view your pitches</a></button>
+            <button><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Go back to all Pitches</a></button>
         </div>
-        {% endif %}
+
         <div class="flash-del">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -40,7 +38,7 @@
     </div>
 
     <div id="make-reorderable-by-rating">
-        {% for pitch in pitches_by_status or pitches_by_genre %}
+        {% for pitch in pitches_by_genre or pitches_by_status %}
         {% if pitch.is_del == false %}
         <div class="pitch-collection">
             <div id="borderimg1">
