@@ -32,7 +32,7 @@
             ] -%}
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Greenlit</a>
+            <a class="navbar-brand" href="/">Greenlit</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -67,6 +67,23 @@
     <!-- Bootstrap core JavaScript -->
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+
+    <script>
+        // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop
+        // $(document).ready(function () {
+        //     const p = $(".panel");
+        //     p.hide();
+
+        //     $('.drop-down').click(function () {
+        //         var currentId = $(this).attr("id");
+        //         var flaskMade = currentId.replace("down-drop-",
+        //         ""); 
+        //         $('#content-' + flaskMade).slideToggle("slow");
+        //     });
+        // });
+    </script>
+
 
 </body>
 

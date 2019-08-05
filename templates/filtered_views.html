@@ -19,22 +19,6 @@
         </div>
     </div>
 
-    <ul>
-        {% for genre in genres %}
-        <li><a
-                href="{{ url_for('filter_pitch', sort_field='created_at', filter=genre.genre_name )}}">{{ genre.genre_name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <ul>
-        {% for status in statuses %}
-        <li><a
-                href="{{ url_for('filter_pitch', sort_field='created_at', filter=status.is_greenlit )}}">{{ status.is_greenlit }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
     <div class="row">
         {% if session['username'] %}
 
@@ -43,11 +27,6 @@
                     {{ session['username']|title }}, view your pitches</a></button>
         </div>
         {% endif %}
-        <div class="col-6">
-            <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-            <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                    update</a></button>
-        </div>
         <div class="flash-del">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -61,7 +40,7 @@
     </div>
 
     <div id="make-reorderable-by-rating">
-        {% for pitch in pitches %}
+        {% for pitch in pitches_by_status or pitches_by_genre %}
         {% if pitch.is_del == false %}
         <div class="pitch-collection">
             <div id="borderimg1">

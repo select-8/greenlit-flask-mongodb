@@ -9,7 +9,6 @@
 {% endmacro %}
 
 
-
 <div class="row">
     <div class="col-4">
         <form action="{{ url_for('delete_pitch') }}" method="POST">
@@ -56,11 +55,11 @@
     {% for pitch in pitches %}
     {% if pitch.is_del == false and pitch.username == session['username'] %}
     <div class="pitch-collection">
-        <div id="borderimg1">
+        <div id="borderimg1" class="accordion">
             <div class="row accordion banner">
-                <div class="col-1 clickers">
-                    <a href="#" id="drop-down" class="info_button">Deets</a>
-                </div>
+                <!-- <div class="col-1 clickers">
+                    <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}" class="info_button drop-down">Deets</a>
+                </div> -->
                 <div class="col-4">
                     <h3 class="title">{{ pitch.title|title }}</h3>
                 </div>
@@ -84,11 +83,11 @@
                 </div>
                 <div class="col-1 offset-3 d-flex justify-content-end vote-count">
                     <span
-                        class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == 1 else 'rejected' }}">{{ pitch.votes }}</span>
+                        class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
                 </div>
             </div>
             <hr>
-            <div id="content" class="panel">
+            <div id="content-{{ pitch._id }}" class="panel">
                 <div class="row">
                     <div class="col-12">
                         <p>

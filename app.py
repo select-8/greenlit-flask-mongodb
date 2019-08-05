@@ -86,7 +86,17 @@ def user_pitches(sort_field):
 def all_pitches(sort_field):
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     votes = _votes.find_one()
-    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes)
+    genres = _genres.find()
+    status = mongo.db.status.find()
+    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes, genres=genres, statuses=status)
+
+
+@app.route('/filter_pitch', defaults={'filter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
+@app.route('/filter_pitch/<filter>/<sort_field>')
+def filter_pitch(filter, sort_field):
+    pitch_by_genre = _pitches.find({'genre_name': filter}).sort(sort_field, pymongo.DESCENDING)
+    pitch_by_status = _pitches.find({'is_greenlit': filter}).sort(sort_field, pymongo.DESCENDING)
+    return render_template("filtered_views.html", pitches_by_genre=pitch_by_genre, pitches_by_status=pitch_by_status)
 
 
 @app.route('/show_users')
@@ -200,7 +210,7 @@ def update_pitch(pitch_id):
 
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
 def is_greenlit(pitch_id):
-    random_is_greenlit = randint(0,1)
+    random_is_greenlit = str(randint(0,1))
     bad_actor = _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0})
     bad_director = _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0})
     for ka, va in bad_actor.items():
@@ -215,7 +225,7 @@ def is_greenlit(pitch_id):
                 flash('those two will never work together, try again!')
             else:
                 _pitches.update( {'_id': ObjectId(pitch_id)},
-                {"$set": {'is_greenlit':randint(0,1)}})
+                {"$set": {'is_greenlit':random_is_greenlit}})
                 flash("how did you do?")
     return redirect(url_for('user_pitches'))
 
