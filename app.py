@@ -38,6 +38,7 @@ def index():
     count = _pitches.count({'username' : username})
     return render_template('index.html', count=count)
 
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
@@ -52,6 +53,7 @@ def login():
         return 'Invalid Username'
     return render_template('login.html', error = error)
 
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
@@ -65,10 +67,12 @@ def register():
         return 'That username already exists!'
     return render_template('register.html')
 
+
 @app.route('/logout')
 def logout():
    session.pop('username', None)
-   return redirect(url_for('index'))
+   return redirect(url_for('login'))
+
 
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
@@ -81,13 +85,6 @@ def user_pitches(sort_field):
         return render_template("user_pitches.html", pitches=pitches, tags=tags, users=users, count=count, statuses=status)
     else:
         return redirect(url_for('all_pitches'))
-
-
-@app.route('/filter_status', defaults={'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
-@app.route('/filter_status/<sfilter>/<sort_field>')
-def filter_status(sfilter, sort_field):
-    pitch_by_status = _pitches.find({'is_greenlit': sfilter}).sort(sort_field, pymongo.DESCENDING)
-    return render_template("filter_status.html", pitches_by_status=pitch_by_status)
 
 
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
@@ -104,7 +101,18 @@ def all_pitches(sort_field):
 @app.route('/filter_genre/<gfilter>/<sort_field>')
 def filter_genre(gfilter, sort_field):
     pitch_by_genre = _pitches.find({'genre_name': gfilter}).sort(sort_field, pymongo.DESCENDING)
-    return render_template("filter_genre.html", pitches_by_genre=pitch_by_genre)
+    count = pitch_by_genre.count()
+    if count == 0:
+        flash("Currently no entries exist under that genre, maybe you should add one!")
+    return render_template("filter_genre.html", pitches_by_genre=pitch_by_genre, count=count)
+
+
+@app.route('/filter_status', defaults={'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
+@app.route('/filter_status/<sfilter>/<sort_field>')
+def filter_status(sfilter, sort_field):
+    username = session.get('username')
+    pitch_by_status = _pitches.find({'username': username,'is_greenlit': sfilter}).sort(sort_field, pymongo.DESCENDING)
+    return render_template("filter_status.html", pitches_by_status=pitch_by_status, username=username)
 
 
 @app.route('/show_users')
@@ -113,6 +121,7 @@ def show_users():
     username = session.get('username')
     the_user = usercoll.find_one({'username': username})
     return render_template("show_users.html", user=the_user)
+
 
 @app.route('/add_pitch')
 def add_pitch():
@@ -155,7 +164,7 @@ def insert_pitch():
                     'actor': actor_name, 'description': description,
                     'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
                     'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
-                    'is_del':False, 'votes':0
+                    'is_del':False, 'votes':0, 'is_greenlit': '0'
                     })
     # return redirect(url_for('insert_vote'))
     flash('your pitch has been added')

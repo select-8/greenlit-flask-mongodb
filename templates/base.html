@@ -71,17 +71,17 @@
 
     <script>
         // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop
-        // $(document).ready(function () {
-        //     const p = $(".panel");
-        //     p.hide();
+        $(document).ready(function () {
+            const p = $(".panel");
+            p.hide();
 
-        //     $('.drop-down').click(function () {
-        //         var currentId = $(this).attr("id");
-        //         var flaskMade = currentId.replace("down-drop-",
-        //         ""); 
-        //         $('#content-' + flaskMade).slideToggle("slow");
-        //     });
-        // });
+            $('.drop-down').click(function () {
+                var currentId = $(this).attr("id");
+                var flaskMade = currentId.replace("down-drop-",
+                ""); 
+                $('#content-' + flaskMade).slideToggle("slow");
+            });
+        });
     </script>
 
 

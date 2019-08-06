@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% set active_page = "all_pitches" %}
+{% set active_page = "user_pitches" %}
 {% block content %}
 
 {% macro sentence_case(text) %}
@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="col-4 pitch-title">
-            <p>All Pitches</p>
+            <p>Your filtered pitches Pitches</p>
         </div>
         <div class="col-4 offset-md-4">
             <form action="{{ url_for('delete_pitch') }}" method="POST">
@@ -20,6 +20,7 @@
     </div>
 
     <div class="row">
+        
 
         <div class="col-4">
             <button><a href="{{ url_for('user_pitches', sort_field='last_modified') }}">Go back to your Pitches</a></button>

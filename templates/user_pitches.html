@@ -53,16 +53,20 @@
 </div>
 
 <div class="col-4">
-        <form>
-            <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
-                <option value="" disabled selected>Filter by Status</option>
-                {% for status in statuses %}
-                <option value="{{ url_for('filter_status', sort_field='created_at', sfilter=status.is_greenlit )}}">
-                    {{ status.is_greenlit }}</option>
-                {% endfor %}
-            </select>
-        </form>
-    </div>
+
+    <form>
+        <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
+            <option value="" disabled selected>Filter by Status</option>
+            {% for status in statuses %}
+
+            <option value="{{ url_for('filter_status', sort_field='created_at', sfilter=status.is_greenlit )}}">
+                {% if status.is_greenlit == '1' %} Greenlit {% else %} Redlit {% endif %}</option>
+
+            {% endfor %}
+        </select>
+    </form>
+
+</div>
 
 <div class="container" id="make-reorderable-by-rating">
     {% for pitch in pitches %}
@@ -70,9 +74,9 @@
     <div class="pitch-collection">
         <div id="borderimg1" class="accordion">
             <div class="row accordion banner">
-                <!-- <div class="col-1 clickers">
+                <div class="col-1 clickers">
                     <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}" class="info_button drop-down">Deets</a>
-                </div> -->
+                </div>
                 <div class="col-4">
                     <h3 class="title">{{ pitch.title|title }}</h3>
                 </div>
