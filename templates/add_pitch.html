@@ -73,11 +73,13 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-12 col-md-3 location input-field input-desc">
-                <input type="text" name="location">
-                {% for location in tag_locations|title %}
-                <datalist id="location" name="location" value="{{location.location}}">{{location.location}}</datalist>
-                {% endfor %}
+            <div class="col-12 col-md-3 input-field">
+                <select id="location" name="location">
+                    <option value="" disabled selected>Location</option>
+                    {% for location in tag_locations %}
+                    <option value="{{location.location}}">{{location.location}}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>
@@ -97,14 +99,14 @@
 </form>
 
 <div class="flash-del">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <h5>{{ message }}</h5>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <h5>{{ message }}</h5>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 
 
 {% endblock %}

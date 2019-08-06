@@ -164,7 +164,7 @@ def insert_pitch():
                     'actor': actor_name, 'description': description,
                     'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
                     'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
-                    'is_del':False, 'votes':0, 'is_greenlit': '0'
+                    'is_del':False, 'votes':0, 'is_greenlit': '0', 'num_edit': 0
                     })
     # return redirect(url_for('insert_vote'))
     flash('your pitch has been added')
@@ -204,7 +204,7 @@ def edit_pitch(pitch_id):
 def update_pitch(pitch_id):
     pitches = mongo.db.pitches
     tags = mongo.db.tags
-    # last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
+    last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
     pitches.update( {'_id': ObjectId(pitch_id)},
     {"$set": {
         'title':request.form.get('title'),
@@ -222,28 +222,35 @@ def update_pitch(pitch_id):
         'is_del':False
         }
     })
+    pitches.update({ '_id': ObjectId(pitch_id) },{"$inc": {'num_edit': 1} } )
     return redirect(url_for('user_pitches'))
 
 
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
 def is_greenlit(pitch_id):
     random_is_greenlit = str(randint(0,1))
+    num_votes = _pitches.find_one({'_id':ObjectId(pitch_id)},{'votes': 1, '_id': 0})
     bad_actor = _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0})
     bad_director = _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0})
-    for ka, va in bad_actor.items():
-        for kd, vd in bad_director.items():
-            if va == 'Matt Damon':
-                _pitches.update( {'_id': ObjectId(pitch_id)},
-                {"$set": {'is_greenlit':0}})
-                flash('no way lad, not Matt Damon')
-            elif va == 'Spike Jones' and vd == 'David O Russell':
-                _pitches.update( {'_id': ObjectId(pitch_id)},
-                {"$set": {'is_greenlit':0}})
-                flash('those two will never work together, try again!')
-            else:
-                _pitches.update( {'_id': ObjectId(pitch_id)},
-                {"$set": {'is_greenlit':random_is_greenlit}})
-                flash("how did you do?")
+    for k, v in num_votes.items():
+        if v >= 5:
+            _pitches.update( {'_id': ObjectId(pitch_id)},
+                {"$set": {'is_greenlit':'1'}})
+        else:
+            for ka, va in bad_actor.items():
+                for kd, vd in bad_director.items():
+                    if va == 'Matt Damon':
+                        _pitches.update( {'_id': ObjectId(pitch_id)},
+                        {"$set": {'is_greenlit':'0'}})
+                        flash('no way lad, not Matt Damon')
+                    elif va == 'Spike Jones' and vd == 'David O Russell':
+                        _pitches.update( {'_id': ObjectId(pitch_id)},
+                        {"$set": {'is_greenlit':'0'}})
+                        flash('those two will never work together, try again!')
+                    else:
+                        _pitches.update( {'_id': ObjectId(pitch_id)},
+                        {"$set": {'is_greenlit':random_is_greenlit}})
+                        flash("how did you do?")
     return redirect(url_for('user_pitches'))
 
 

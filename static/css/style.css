@@ -6,8 +6,18 @@ hr {
   border-top: 2px solid black;
 }
 
+.pitches_main {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #e5e5e5;
+}
+
 .clickers {
   font-family: 'Raleway', sans-serif;
+}
+
+.choices {
+  padding-bottom: 10px;
 }
 
 textarea .dt {
@@ -21,10 +31,6 @@ textarea .dt {
   font-size: 14px;
   resize: none;
   outline: none;
-}
-
-.banner {
-  margin-top: 20px;
 }
 
 .flash-del h5 {
@@ -49,41 +55,56 @@ textarea .dt {
   padding-top: 5px;
 }
 
-#borderimg1 {
+#borderimg {
   border: 10px solid transparent;
-  margin: 10px;
   border-image-source: url(../images/film-strip.jpg);
   border-image-repeat: repeat;
   border-image-slice: 300;
   background-color: rgba(0,0,0,.75);
-  padding-bottom: 10px;
   color: #fafafa;
 }
 
-.pitch-collection {
-  padding-top: 10px;
-}
-
-.vote-block {
+#borderimg .title {
   margin-top: 5px;
+  color: #89050c;
+  background-color: white;
 }
 
-/* .vote-count {
-  font-size: 1.5em;
+.pitch-collection {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-
-.vote-count span {
-  color: crimson;
-  font-weight: bolder;
-} */
 
 .lit-dot {
+  position: relative;
+  margin-top: 6.5px;
   height: 25px;
   width: 25px;
-  /* background-color: #bbb; */
+  text-align: center;
+  vertical-align: middle;
   border-radius: 50%;
   display: inline-block;
   color: white;
+}
+
+.info_button {
+  color: #008080
+}
+
+.remove_button {
+  color: crimson;
+}
+
+.remove_button:hover {
+  color: darkred;
+}
+
+.submit_button {
+  color: #e54e2d
+}
+
+.remove_pitch {
+  justify-content: flex-end; 
 }
 
 .rejected {
@@ -95,26 +116,24 @@ textarea .dt {
 }
 
 .accordion {
-  /* background-color: #eee; */
-  background-color: #ccc;
-  cursor: pointer;
-  padding: 18px;
+  background-color: #a3a3a3;
+  text-align: center;
   width: 100%;
   border: none;
-  text-align: center;
   outline: none;
   font-size: 15px;
   transition: 0.4s;
 }
 
-/* .active, .accordion:hover {
-  background-color: #ccc;
-} */
+.banner {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
 .panel {
-  padding: 0 18px;
-  /* background-color: white; */
-  /* max-height: 0; */
-  /* overflow: hidden; */
   transition: max-height 0.2s ease-out;
+}
+
+.pitch-text {
+  padding: 0;
 }

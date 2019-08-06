@@ -19,7 +19,7 @@
     <div class="container-fluid">
         {% set navbar_in = [
                             ('/', 'index', 'Home'),
-                            ('/user_pitches', 'user_pitches', 'Your Pitches'),
+                            ('/user_pitches', 'user_pitches', 'My Pitches'),
                             ('/all_pitches', 'all_pitches', 'All Pitches'),
                             ('/logout', 'logout', 'Logout')
                             ] -%}
@@ -71,17 +71,32 @@
 
     <script>
         // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop
+
+        function togglePitchDiv() {
+            $('.drop_down').click(function () {
+                var currentId = $(this).attr("id");
+                var flaskMade = currentId.replace("down-drop-", "");
+                $('#content-' + flaskMade).slideToggle("slow");
+            });
+        };
+
         $(document).ready(function () {
             const p = $(".panel");
             p.hide();
+            togglePitchDiv()
 
-            $('.drop-down').click(function () {
-                var currentId = $(this).attr("id");
-                var flaskMade = currentId.replace("down-drop-",
-                ""); 
-                $('#content-' + flaskMade).slideToggle("slow");
+            $('.vote_button').click(function () {
+                var buttId = $(this).attr("id");
+                var divId = buttId.replace("vote-", "");
+                $.ajax("{{ url_for('all_pitches') }}").done(function (reply) {
+                    $('#thisPitch-' + divId).html(reply);
+                });
             });
         });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 
 

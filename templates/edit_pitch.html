@@ -5,8 +5,8 @@
 <form action="{{ url_for('update_pitch', pitch_id=pitch._id) }}" method="POST">
 
     <div class=" input-field input-title">
-    <p>Change the Title</p>
-    <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
+        <p>Change the Title</p>
+        <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
     </div>
     <br>
     <div class="input-field" style="width:200px;">
@@ -82,9 +82,20 @@
             {% endif %}
             {% endfor %}
         </select>
-        <div class="input-field input-title">
+        <select id="location" name="location" type="text" class="validate">
+            <option value="{{pitch.tag.location}}" disabled selected>{{pitch.tag.location}}</option>
+            {% for tag in tag_locations %}
+            {% if tag.title == pitch.tag.location %}
+            <option value="{{tag.title}}" selected>{{tag.title}}</option>
+            {% else %}
+            <option value="{{tag.location}}">{{tag.location}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+
+        <!-- <div class="input-field input-title">
             <input id="location" name="location" type="text" class="validate" value="{{pitch.tag.location}}">
-        </div>
+        </div> -->
     </div>
     <br>
     <br>

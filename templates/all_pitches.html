@@ -52,8 +52,8 @@
     <div id="make-reorderable-by-rating">
         {% for pitch in pitches %}
         {% if pitch.is_del == false %}
-        <div class="pitch-collection">
-            <div id="borderimg1">
+        <div class="pitch-collection" id="thisPitch-{{ pitch._id }}">
+            <div id="borderimg1" class="accordion">
                 <div class="row vote-block">
                     <div class="col-3">
                         <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
@@ -62,7 +62,7 @@
                             {% elif not session['username'] %}
                             <button type="submit" disabled>Please login to vote</button>
                             {% else %}
-                            <button type="submit">Vote</button>
+                            <button id="vote-{{ pitch._id }}" class="vote_button" type="submit">Vote</button>
                             {% endif %}
                         </form>
                     </div>
@@ -73,16 +73,16 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <h5 class="title">Pitch added by: {{ pitch.username|title }}</h5>
+                        <h5 class="user-title">Pitch added by: {{ pitch.username|title }}</h5>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 pitch-title">
                         <h3 class="title">{{ pitch.title|title }}</h3>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 pitch-string">
                         <p>
                             {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
                             {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
@@ -91,12 +91,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 pitch-description">
                         <p>{{ sentence_case(pitch.description) }}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 pitch-tagline">
                         <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
                     </div>
                     <div class="col-12">
