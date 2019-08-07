@@ -335,6 +335,21 @@ def delete_pitch():
     return redirect(url_for('user_pitches'))
 
 
+@app.route("/show_stats")
+def show_stats():
+    return render_template("show_stats.html")
+
+
+@app.route("/get_data")
+def get_data():
+    stat_data = []
+    pitches = _pitches.find()
+    for data in pitches:
+        stat_data.append(data)
+    stat_data = json.dumps(stat_data, default=json_util.default)
+    return stat_data
+
+
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
             port=os.environ.get('PORT'),

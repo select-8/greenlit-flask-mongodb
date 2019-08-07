@@ -10,6 +10,7 @@ hr {
   border-top: 2px solid black;
 }
 
+/* --------------------------------------NAVBAR-------- */
 .nav_go_home {
   display: inline-block;
   padding-top: .3125rem;
@@ -27,18 +28,51 @@ hr {
   text-decoration: none;
 }
 
-/* .nav_go_home a {
-  color: green;
-  text-decoration: none;
-  background-color: transparent;
-} */
-
+/* --------------------------------------PITCH CONTAINERs-------- */
 .pitches_main {
   padding-top: 10px;
   padding-bottom: 10px;
   margin-top: 50px;
   background-color: #e5e5e5;
-  /* background-color: #434343; */
+}
+
+.pitch-collection {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.borderimg {
+  border: 10px solid transparent;
+  border-image-source: url(../images/film-strip.jpg);
+  border-image-repeat: repeat;
+  border-image-slice: 300;
+  background-color: rgba(0, 0, 0, .75);
+  color: #fafafa;
+  /* margin-top: 50px;
+  margin-bottom: 50px; */
+}
+
+.banner {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #a3a3a3;
+  text-align: center;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+.panel {
+  transition: max-height 0.2s ease-out;
+  background-color: #717171;
+  text-align: center;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  margin-bottom: 5px;
 }
 
 .clickers {
@@ -93,22 +127,8 @@ textarea .dt {
   color: rgba(163, 20, 20)
 }
 
-.borderimg {
-  border: 10px solid transparent;
-  border-image-source: url(../images/film-strip.jpg);
-  border-image-repeat: repeat;
-  border-image-slice: 300;
-  background-color: rgba(0, 0, 0, .75);
-  color: #fafafa;
-}
-
 .borderimg .title {
   margin-top: 5px;
-}
-
-.pitch-collection {
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
 .vote_block {
@@ -160,28 +180,6 @@ textarea .dt {
   background-color: #2d7d42;
 }
 
-.banner {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  background-color: #a3a3a3;
-  text-align: center;
-  width: 100%;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  transition: 0.4s;
-}
-
-.panel {
-  transition: max-height 0.2s ease-out;
-  background-color: #717171;
-  text-align: center;
-  width: 100%;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  margin-bottom: 5px;
-}
 
 .pitch-text {
   padding: 0;

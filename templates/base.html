@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
     <script type="text/javascript" href="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="text/javascript" src="static/js/d3.min.js"></script>
+    <script type="text/javascript" src="static/js/crossfilter.min.js"></script>
+    <script type="text/javascript" src="static/js/dc.min.js"></script>
+    <script type="text/javascript" src="static/js/queue.min.js"></script>
 </head>
 {% block title %}
 <title>GREENLIT</title>
@@ -28,10 +32,10 @@
             ('/login', 'login', 'Log In'),
             ('/register', 'register', 'Register')
             ] -%}
-        
+
         {% set navbar_admin = [
             ('/show_users', 'users', 'Users'),
-            ('/stats', 'stats', 'Statistics'),
+            ('/show_stats', 'stats', 'Statistics'),
             ('/all_pitches', 'all_pitches', 'All Pitches'),
             ('/logout', 'logout', 'Logout')
             ] -%}
@@ -65,23 +69,21 @@
 
             {% elif session['username']|lower == 'admin'  %}
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
-                    {% for link, id, text in navbar_admin[:3] %}
-                    <ul class="navbar-nav ml-4">
-                        <li {% if id == active_page %} class="nav-item active" {% endif %}>
-                            <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
-                    </ul>
-                    {%  endfor %}
-                </div>
-                <div class="nav navbar-nav order-md-last">
-                    {% for link, id, text in navbar_admin[-1:] %}
-                    <ul class="nav navbar-nav">
-                        <li {% if id == active_page %} class="nav-item active" {% endif %}>
-                            <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
-                    </ul>
-                    {% endfor %}
-                </div>
-            
-
+                {% for link, id, text in navbar_admin[:3] %}
+                <ul class="navbar-nav ml-4">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {%  endfor %}
+            </div>
+            <div class="nav navbar-nav order-md-last">
+                {% for link, id, text in navbar_admin[-1:] %}
+                <ul class="nav navbar-nav">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {% endfor %}
+            </div>
             {% else %}
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
                 {% for link, id, text in navbar_out[:1] %}
@@ -160,6 +162,49 @@
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip()
             })
+        </script>
+
+        <script>
+            queue()
+                .defer(d3.json, "/get_data")
+                .await(makeGraphs);
+
+            function makeGraphs(error, pitchesData) {
+                var ndx = crossfilter(pitchesData);
+
+                var genre_dim = ndx.dimension(dc.pluck('username'));
+                console.log(genre_dim.top(Infinity))
+                var group = genre_dim.group();
+
+                dc.pieChart('#per-person-chart')
+                    .height(330)
+                    .radius(90)
+                    .transitionDuration(1500)
+                    .dimension(genre_dim)
+                    .group(group);
+
+                // var store_dim = ndx.dimension(dc.pluck('store'));
+                // var total_spend_per_store = store_dim.group().reduceSum(dc.pluck('spend'));
+
+                // dc.pieChart('#per-store-chart')
+                //     .height(330)
+                //     .radius(90)
+                //     .transitionDuration(1500)
+                //     .dimension(store_dim)
+                //     .group(total_spend_per_store);
+
+                // var state_dim = ndx.dimension(dc.pluck('state'));
+                // var total_spend_per_state = state_dim.group().reduceSum(dc.pluck('spend'));
+
+                // dc.pieChart('#per-state-chart')
+                //     .height(330)
+                //     .radius(90)
+                //     .transitionDuration(1500)
+                //     .dimension(state_dim)
+                //     .group(total_spend_per_state);
+
+                dc.renderAll();
+            }
         </script>
 
 
