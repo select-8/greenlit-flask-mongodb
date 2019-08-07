@@ -115,6 +115,7 @@
         <!-- Bootstrap core JavaScript -->
         <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/graphs.js') }}"></script>
 
         <!-- // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop -->
         <script>
@@ -163,50 +164,6 @@
                 $('[data-toggle="tooltip"]').tooltip()
             })
         </script>
-
-        <script>
-            queue()
-                .defer(d3.json, "/get_data")
-                .await(makeGraphs);
-
-            function makeGraphs(error, pitchesData) {
-                var ndx = crossfilter(pitchesData);
-
-                var genre_dim = ndx.dimension(dc.pluck('username'));
-                console.log(genre_dim.top(Infinity))
-                var group = genre_dim.group();
-
-                dc.pieChart('#per-person-chart')
-                    .height(330)
-                    .radius(90)
-                    .transitionDuration(1500)
-                    .dimension(genre_dim)
-                    .group(group);
-
-                // var store_dim = ndx.dimension(dc.pluck('store'));
-                // var total_spend_per_store = store_dim.group().reduceSum(dc.pluck('spend'));
-
-                // dc.pieChart('#per-store-chart')
-                //     .height(330)
-                //     .radius(90)
-                //     .transitionDuration(1500)
-                //     .dimension(store_dim)
-                //     .group(total_spend_per_store);
-
-                // var state_dim = ndx.dimension(dc.pluck('state'));
-                // var total_spend_per_state = state_dim.group().reduceSum(dc.pluck('spend'));
-
-                // dc.pieChart('#per-state-chart')
-                //     .height(330)
-                //     .radius(90)
-                //     .transitionDuration(1500)
-                //     .dimension(state_dim)
-                //     .group(total_spend_per_state);
-
-                dc.renderAll();
-            }
-        </script>
-
 
 </body>
 
