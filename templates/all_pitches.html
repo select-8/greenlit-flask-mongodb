@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% set active_page = "all_pitches" %}
+
 {% block content %}
 
 {% macro sentence_case(text) %}
@@ -49,54 +50,62 @@
 
     </div>
 
-    <div id="make-reorderable-by-rating">
+    <div class="container pitches_main">
         {% for pitch in pitches %}
         {% if pitch.is_del == false %}
-        <div class="pitch-collection" id="thisPitch-{{ pitch._id }}">
-            <div id="borderimg1" class="accordion">
-                <div class="row vote-block">
-                    <div class="col-3">
-                        <form action="{{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
-                            {% if session['username'] == pitch.username %}
-                            <button type="submit" disabled>No Vote</button>
-                            {% elif not session['username'] %}
-                            <button type="submit" disabled>Please login to vote</button>
-                            {% else %}
-                            <button id="vote-{{ pitch._id }}" class="vote_button" type="submit">Vote</button>
-                            {% endif %}
-                        </form>
-                    </div>
-                    <div class="col-2 offset-md-7 d-flex justify-content-end vote-count">
-                        <span
-                            class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
-                    </div>
+        <div class="pitch-collection borderimg" id="thisPitch-{{ pitch._id }}">
+            <div class="row banner">
+                <div class="col-1 clickers">
+                    <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}"
+                        class="btn info_button drop_down">Details</a>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <h5 class="user-title">Pitch added by: {{ pitch.username|title }}</h5>
-                    </div>
+                <div class="col-6">
+                    <h3 class="title pitch-title-{{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">
+                        {{ pitch.title|title }}</h3>
                 </div>
-                <div class="row">
-                    <div class="col-12 pitch-title">
-                        <h3 class="title">{{ pitch.title|title }}</h3>
-                    </div>
+                <div class="col-2 user-title">
+                    <h5>Owner: {{ pitch.username|title }}</h5>
                 </div>
+                <div class="col-1 vote-block"">
+                    <form action=" {{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
+                    {% if session['username'] == pitch.username %}
+                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                        title="You can't vote for your own pitch!">
+                        <button type="button" class="btn" style="pointer-events: none;" disabled>Vote</button>
+                    </span>
+                    {% elif not session['username'] %}
+                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                        title="Log in to vote!">
+                        <button type="button" class="btn" style="pointer-events: none;" disabled>Vote</button>
+                    </span>
+                    {% else %}
+                    <button id="vote-{{ pitch._id }}" type="submit" class="vote_button">Vote</button>
+                    {% endif %}
+                    </form>
+                </div>
+                <div class="col-1 vote-count">
+                    <span
+                        class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
+                </div>
+            </div>
+            <div id="content-{{ pitch._id }}" class="panel">
                 <div class="row">
-                    <div class="col-12 pitch-string">
+                    <div class="col-12 pitch-text">
                         <p>
-                            {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
+                            {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An
+                            {% endif %}
                             {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
                             {{ pitch.actor }}.
                         </p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 pitch-description">
+                    <div class="col-12 pitch-text">
                         <p>{{ sentence_case(pitch.description) }}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 pitch-tagline">
+                    <div class="col-12 pitch-text">
                         <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
                     </div>
                     <div class="col-12">
@@ -116,6 +125,4 @@
         {% endif %}
         {% endfor %}
     </div>
-</div>
-
-{% endblock %}
+    {% endblock %}

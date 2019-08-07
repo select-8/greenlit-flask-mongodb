@@ -9,41 +9,37 @@
 {% endmacro %}
 
 
-<div class="row">
-    <div class="col-4">
-        <form action="{{ url_for('delete_pitch') }}" method="POST">
-            <button class="alert alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
-        </form>
-    </div>
 
-    <div class="col-4 flash-del">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <h5>{{ message }}</h5>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
+
+<div class="col-4 flash-del">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <h5>{{ message }}</h5>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 </div>
 
 <div class="container">
     <div class="row">
-        <div class="col-12">
-            <h3>Pitches</h3>
+        <div class="col-4 pitch-user">
+                {% if session['username'] and count > 0 %}
+                <p>Welcome {{ session['username']|title }}</p>
+                {% elif session['username'] and count == 0 %}
+                <p>Welcome {{ session['username']|title }} ready to add your first pitch?.</p>
+                {% else %}
+                <button type="button"><a href="{{ url_for('index') }}">Hello, please log in!</a></button>
+                {% endif %}
+        </div>
+        <div class="col-4 offset-md-4">
+            <form action="{{ url_for('delete_pitch') }}" method="POST">
+                <button class="admin-flush alert-danger" type="submit">Admin Only, flush those pitches!!!</button>
+            </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            {% if session['username'] and count > 0 %}
-            <h4>Welcome {{ session['username']|title }}.</h4>
-            {% elif session['username'] and count == 0 %}
-            <h4>Welcome {{ session['username']|title }} ready to add your first pitch?.</h4>
-            {% else %}
-            <button type="button"><a href="{{ url_for('index') }}">Hello non logged in user, log in FFS!!!</a></button>
-            {% endif %}
-        </div>
-    </div>
+
 
     <div class="row choices">
         <div class="col-3">
@@ -74,109 +70,86 @@
 
 </div>
 
-<!-- <div class="col-4">
-
-    <form>
-        <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
-            <option value="" disabled selected>Filter by Status</option>
-            {% for status in statuses %}
-
-            <option value="{{ url_for('filter_status', sort_field='created_at', sfilter=status.is_greenlit )}}">
-                {% if status.is_greenlit == '1' %} Greenlit {% else %} Redlit {% endif %}</option>
-
-            {% endfor %}
-        </select>
-    </form>
-
-</div> -->
-
 <div class="container pitches_main">
     {% for pitch in pitches %}
     {% if pitch.is_del == false and pitch.username == session['username'] %}
-    <div class="pitch-collection">
-        <div id="borderimg" class="accordion">
-            <div class="row accordion banner">
-                <div class="col-1 clickers">
-                    <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}"
-                        class="btn info_button drop_down">Details</a>
-                </div>
-                <div class="col-6">
-                    <h3 class="title pitch-title">{{ pitch.title|title }}</h3>
-                </div>
-                <div class="col-1">
-                    {% if pitch.num_edit > 2 %}
-                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                        title="You've reached max edits for this pitch">
-                        <button type="button" class="btn btn-default" style="pointer-events: none;"
-                            disabled>Edit</button>
-                    </span>
-                    {% elif pitch.is_greenlit == '1' %}
-                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                        title="This is already Greenlit fool!">
-                        <button type="button" class="btn btn-default" style="pointer-events: none;"
-                            disabled>Edit</button>
-                    </span>
-                    {% else %}
-                    <button class="btn btn-default" type="button"><a
-                            href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
-                    {% endif %}
-                </div>
-                <div class="col-1">
-                    <form action="{{ url_for('is_greenlit', pitch_id=pitch._id) }}" method="POST">
-                        {% if pitch.is_greenlit == '1' %}
-                        <button class="btn btn-default" type="submit" disabled>SUBMIT</button>
-                        {% elif pitch.num_edit > 2 and pitch.votes < 5 %}
-                        <button class="btn btn-default" type="submit" disabled>SUBMIT</button>
-                        {% else %}
-                        <button class="btn btn-default submit_button" type="submit">SUBMIT</button>
-                        {% endif %}
-                    </form>
-                </div>
-                <div class="col-1 vote-count">
-                    <span
-                        class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
-                </div>
-                <div class="col-1 remove_pitch">
-                    <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
-                        <button class="btn btn-default remove_button" type="submit">Remove</button>
-                    </form>
-                </div>
+    <div class="pitch-collection borderimg">
+        <div class="row banner">
+            <div class="col-1 clickers">
+                <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}"
+                    class="btn info_button drop_down">Details</a>
             </div>
-            <div id="content-{{ pitch._id }}" class="panel">
-                <div class="row">
-                    <div class="col-12 pitch-text">
-                        <p>
-                            {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
-                            {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
-                            {{ pitch.actor }}.
-                        </p>
-                    </div>
+            <div class="col-6">
+                <h3 class="title pitch-title-{{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">
+                    {{ pitch.title|title }}</h3>
+            </div>
+            <div class="col-1">
+                {% if pitch.num_edit > 2 %}
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                    title="You've reached max edits for this pitch">
+                    <button type="button" class="btn btn-default" style="pointer-events: none;" disabled>Edit</button>
+                </span>
+                {% elif pitch.is_greenlit == '1' %}
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="This is already Greenlit fool!">
+                    <button type="button" class="btn btn-default" style="pointer-events: none;" disabled>Edit</button>
+                </span>
+                {% else %}
+                <button class="btn btn-default" type="button"><a
+                        href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">Edit</a></button>
+                {% endif %}
+            </div>
+            <div class="col-1">
+                <form action="{{ url_for('is_greenlit', pitch_id=pitch._id) }}" method="POST">
+                    {% if pitch.is_greenlit == '1' %}
+                    <button class="btn btn-default" type="submit" disabled>SUBMIT</button>
+                    {% elif pitch.num_edit > 2 and pitch.votes < 5 %}
+                    <button class="btn btn-default" type="submit" disabled>SUBMIT</button>
+                    {% else %}
+                    <button class="btn btn-default submit_button" type="submit">SUBMIT</button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="col-1 vote-count">
+                <span
+                    class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
+            </div>
+            <div class="col-1 remove_pitch">
+                <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
+                    <button class="btn btn-default remove_button" type="submit">Remove</button>
+                </form>
+            </div>
+        </div>
+        <div id="content-{{ pitch._id }}" class="panel">
+            <div class="row">
+                <div class="col-10 offset-1 pitch-text">
+                    <p>
+                        {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
+                        {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
+                        {{ pitch.actor }}.
+                    </p>
                 </div>
-                <div class="row">
-                    <div class="col-12 pitch-text">
-                        <p>{{ sentence_case(pitch.description) }}</p>
-                    </div>
+                <div class="col-10 offset-1 pitch-text">
+                    <p>{{ sentence_case(pitch.description) }}</p>
                 </div>
-                <div class="row">
-                    <div class="col-12 pitch-text">
-                        <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
-                    </div>
-                    <div class="col-12 pitch-text">
-                        <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
-                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                            height="100px">
-                        <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
-                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                            height="100px">
-                        <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
-                            onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
-                            height="100px">
-                    </div>
+                <div class="col-10 offset-1 pitch-text">
+                    <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
+                </div>
+                <div class="col-10 offset-1 pitch-text pitch-img">
+                    <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
+                    <img src="{{ url_for('static', filename = pitch.imgs.tag_img2.img ) }}"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
+                    <img src="{{ url_for('static', filename = pitch.imgs.loc_img.img ) }}"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
                 </div>
             </div>
         </div>
     </div>
     {% endif %}
     {% endfor %}
+</div>
 
-    {% endblock %}
+{% endblock %}

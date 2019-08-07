@@ -82,7 +82,12 @@ def user_pitches(sort_field):
     status = mongo.db.status.find()
     count = _pitches.count({'username' : username})
     if session.get('logged_in') == True:
-        return render_template("user_pitches.html", pitches=pitches, tags=tags, users=users, count=count, statuses=status)
+        return render_template("user_pitches.html",
+                                pitches=pitches, 
+                                tags=tags,
+                                users=users,
+                                count=count,
+                                statuses=status)
     else:
         return redirect(url_for('all_pitches'))
 
@@ -94,7 +99,11 @@ def all_pitches(sort_field):
     votes = _votes.find_one()
     genres = _genres.find()
     status = mongo.db.status.find()
-    return render_template("all_pitches.html", pitches=pitches, tags=tags, votes=votes, genres=genres)
+    return render_template("all_pitches.html",
+                            pitches=pitches,
+                            tags=tags,
+                            votes=votes,
+                            genres=genres)
 
 
 @app.route('/filter_genre', defaults={'gfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
@@ -104,7 +113,9 @@ def filter_genre(gfilter, sort_field):
     count = pitch_by_genre.count()
     if count == 0:
         flash("Currently no entries exist under that genre, maybe you should add one!")
-    return render_template("filter_genre.html", pitches_by_genre=pitch_by_genre, count=count)
+    return render_template("filter_genre.html",
+                            pitches_by_genre=pitch_by_genre,
+                            count=count)
 
 
 @app.route('/filter_status', defaults={'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
@@ -112,7 +123,9 @@ def filter_genre(gfilter, sort_field):
 def filter_status(sfilter, sort_field):
     username = session.get('username')
     pitch_by_status = _pitches.find({'username': username,'is_greenlit': sfilter}).sort(sort_field, pymongo.DESCENDING)
-    return render_template("filter_status.html", pitches_by_status=pitch_by_status, username=username)
+    return render_template("filter_status.html",
+                            pitches_by_status=pitch_by_status,
+                            username=username)
 
 
 @app.route('/show_users')
@@ -120,7 +133,8 @@ def show_users():
     usercoll = mongo.db.users
     username = session.get('username')
     the_user = usercoll.find_one({'username': username})
-    return render_template("show_users.html", user=the_user)
+    return render_template("show_users.html",
+                            user=the_user)
 
 
 @app.route('/add_pitch')
@@ -135,8 +149,12 @@ def add_pitch():
     tag_titles_list = [title for title in _tag_titles]
     _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
     tag_locations_list = [location for location in _tag_locations]
-    return render_template('add_pitch.html', genres = genre_list, directors=director_list, actors=actor_list, tag_titles=tag_titles_list,
-    tag_locations=tag_locations_list)
+    return render_template('add_pitch.html',
+                            genres = genre_list,
+                            directors=director_list,
+                            actors=actor_list,
+                            tag_titles=tag_titles_list,
+                            tag_locations=tag_locations_list)
 
 
 @app.route('/insert_pitch', methods=['POST'])

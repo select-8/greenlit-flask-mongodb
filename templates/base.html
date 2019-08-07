@@ -18,86 +18,124 @@
 
     <div class="container-fluid">
         {% set navbar_in = [
-                            ('/', 'index', 'Home'),
                             ('/user_pitches', 'user_pitches', 'My Pitches'),
                             ('/all_pitches', 'all_pitches', 'All Pitches'),
                             ('/logout', 'logout', 'Logout')
                             ] -%}
 
         {% set navbar_out = [
-            ('/', 'index', 'Home'),
             ('/all_pitches', 'all_pitches', 'All Pitches'),
             ('/login', 'login', 'Log In'),
             ('/register', 'register', 'Register')
             ] -%}
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="/">Greenlit</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
-                {% if session['username'] %}
-                {% for link, id, text in navbar_in %}
-                <ul class="navbar-nav">
-                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
-                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
-                </ul>
-                {% endfor %}
-                {% else %}
-                {% for link, id, text in navbar_out %}
-                <ul class="navbar-nav">
-                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
-                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
-                </ul>
-                {% endfor %}
-                {% endif %}
+        <nav class="navbar navbar-light navbar-expand-md bg-light">
+            <div class="d-flex">
+                <a class="nav_go_home mr-0" href="/">Greenlit Home</a>
+                <button class="navbar-toggler ml-1" type="button" data-toggle="collapse"
+                    data-target="#collapse-this-navbar" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
+
+
+            {% if session['username'] %}
+            <div class="navbar-collapse collapse" id="collapse-this-navbar">
+                {% for link, id, text in navbar_in[:2] %}
+                <ul class="navbar-nav ml-4">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {%  endfor %}
+            </div>
+            <div class="nav navbar-nav order-md-last">
+                {% for link, id, text in navbar_in[-1:] %}
+                <ul class="nav navbar-nav">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="navbar-collapse collapse" id="collapse-this-navbar">
+                {% for link, id, text in navbar_out[:1] %}
+                <ul class="navbar-nav ml-4">
+                    <li {% if id == active_page %} class="nav-item active" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            <div class="nav navbar-nav order-md-last">
+                {% for link, id, text in navbar_out[-2:] %}
+                <ul class="nav navbar-nav">
+                    <li {% if id == active_page %} class="nav-item" {% endif %}>
+                        <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            {% endif %}
         </nav>
-    </div>
-
-    {% endblock nav %}
-
-    <div class="container-fluid">
-        {% block content %}
-        {% endblock content %}
-    </div>
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
 
-    <script>
-        // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop
+        {% endblock nav %}
 
-        function togglePitchDiv() {
-            $('.drop_down').click(function () {
-                var currentId = $(this).attr("id");
-                var flaskMade = currentId.replace("down-drop-", "");
-                $('#content-' + flaskMade).slideToggle("slow");
-            });
-        };
+        <div class="container-fluid">
+            {% block content %}
+            {% endblock content %}
+        </div>
 
-        $(document).ready(function () {
-            const p = $(".panel");
-            p.hide();
-            togglePitchDiv()
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-            $('.vote_button').click(function () {
-                var buttId = $(this).attr("id");
-                var divId = buttId.replace("vote-", "");
-                $.ajax("{{ url_for('all_pitches') }}").done(function (reply) {
-                    $('#thisPitch-' + divId).html(reply);
+        <!-- // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop -->
+        <script>
+            function togglePitchDiv() {
+                $('.drop_down').click(function () {
+                    var currentId = $(this).attr("id");
+                    var flaskMade = currentId.replace("down-drop-", "");
+                    $('#content-' + flaskMade).slideToggle("slow");
+                });
+            };
+
+            $(document).ready(function () {
+                const p = $(".panel");
+                p.hide();
+                togglePitchDiv()
+
+                $('.vote_button').click(function () {
+                    var buttId = $(this).attr("id");
+                    var divId = buttId.replace("vote-", "");
+
+                    // var elmnt = document.getElementById('buttId');
+                    // console.log(buttId)
+                    // elmnt.scrollIntoView();
+
+
+                    $(window).on('load', function () {
+                        var elmnt = document.getElementById(divid)
+                        elmnt.scrollIntoView();
+                    });
+
+                    // $.ajax("{{ url_for('all_pitches') }}").done(function (reply) {
+                    //         // var divid = '#thisPitch-' + divId
+                    //         var elmnt = document.getElementById(divid)
+                    //         elmnt.scrollIntoView();
+                    //     })
+                    //     .fail(function (jqXHR, status, error) {
+                    //         console.log("error: " + error);
+                    //     })
+                    //     .always(function () {
+                    //         console.log("complete");
+                    //     });
                 });
             });
-        });
 
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+        </script>
 
 
 </body>
