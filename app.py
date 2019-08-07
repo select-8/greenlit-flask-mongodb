@@ -49,15 +49,12 @@ def login():
             session['logged_in'] = True
             return redirect(url_for('user_pitches'))
         return 'Invalid Password'
-    # return render_template('login.html', error = error)
-        return 'Invalid Username'
     return render_template('login.html', error = error)
 
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
-        # users = mongo.db.users
         existing_user = _users.find_one({'username' : request.form['username']})
         if existing_user is None:
             hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
@@ -70,15 +67,15 @@ def register():
 
 @app.route('/logout')
 def logout():
-   session.pop('username', None)
+   session.clear()
    return redirect(url_for('login'))
 
 
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
 def user_pitches(sort_field):
-    pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     username = session.get('username')
+    pitches = _pitches.find({'username': username, "is_del": False}).sort(sort_field, pymongo.DESCENDING)
     status = mongo.db.status.find()
     count = _pitches.count({'username' : username})
     if session.get('logged_in') == True:
@@ -95,6 +92,7 @@ def user_pitches(sort_field):
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/all_pitches/<sort_field>')
 def all_pitches(sort_field):
+    username = session.get('username')
     pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
     votes = _votes.find_one()
     genres = _genres.find()
@@ -105,6 +103,24 @@ def all_pitches(sort_field):
                             votes=votes,
                             genres=genres)
 
+
+@app.route('/all_but', defaults={'sort_field': 'last_modified'})
+@app.route('/all_but/<sort_field>')
+def all_but(sort_field):
+    username = session.get('username')
+    not_pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
+    votes = _votes.find_one()
+    genres = _genres.find()
+    status = mongo.db.status.find()
+    if session.get('logged_in') == True:
+        return render_template("all_but_pitches.html",
+                            pitches=not_pitches,
+                            tags=tags,
+                            votes=votes,
+                            genres=genres)
+    else:
+        return redirect(url_for('all_pitches'))
+    
 
 @app.route('/filter_genre', defaults={'gfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
 @app.route('/filter_genre/<gfilter>/<sort_field>')
@@ -118,11 +134,14 @@ def filter_genre(gfilter, sort_field):
                             count=count)
 
 
-@app.route('/filter_status', defaults={'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
+@app.route('/filter_status', defaults={
+    'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
 @app.route('/filter_status/<sfilter>/<sort_field>')
 def filter_status(sfilter, sort_field):
     username = session.get('username')
-    pitch_by_status = _pitches.find({'username': username,'is_greenlit': sfilter}).sort(sort_field, pymongo.DESCENDING)
+    pitch_by_status = _pitches.find({
+        'username': username,'is_greenlit': sfilter
+        }).sort(sort_field, pymongo.DESCENDING)
     return render_template("filter_status.html",
                             pitches_by_status=pitch_by_status,
                             username=username)
@@ -132,9 +151,9 @@ def filter_status(sfilter, sort_field):
 def show_users():
     usercoll = mongo.db.users
     username = session.get('username')
-    the_user = usercoll.find_one({'username': username})
+    users = usercoll.find()
     return render_template("show_users.html",
-                            user=the_user)
+                            users=users)
 
 
 @app.route('/add_pitch')
@@ -278,13 +297,10 @@ def up_votes(pitch_id):
     pitch_in_votes = _votes.count({'pitch_id': ObjectId(pitch_id)})
     voters = _votes.find_one({'pitch_id':ObjectId(pitch_id)})
     pitches = _pitches.find_one({'pitch_id':ObjectId(pitch_id)})
-
     if session.get('logged_in') == True:
-        if pitch_in_votes == 0: # and current_user != pitches.username
+        if pitch_in_votes == 0:
             _votes.insert_one({ 'pitch_id': ObjectId(pitch_id), 'voters': [current_user] } )
             _pitches.update({ '_id': ObjectId(pitch_id) },{"$inc": {'votes': 1} } )
-    # elif pitch_in_votes == 0 and pitches.username == current_user:
-        # _votes.insert_one({ 'pitch_id': ObjectId(pitch_id), 'voters': [current_user] } )
         elif pitch_in_votes > 0 and current_user in voters['voters']:
             _votes.update(
                 {'pitch_id': ObjectId(pitch_id) },
