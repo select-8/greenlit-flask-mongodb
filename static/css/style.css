@@ -84,7 +84,7 @@ hr {
   padding-bottom: 10px;
 }
 
-textarea .dt {
+/* textarea .dt {
   width: 300px;
   height: 100px;
   padding: 5px 5px;
@@ -95,7 +95,7 @@ textarea .dt {
   font-size: 14px;
   resize: none;
   outline: none;
-}
+} */
 
 .flash-del h5 {
   text-decoration: underline;
@@ -186,4 +186,29 @@ textarea .dt {
   padding: 0;
   font-family: 'Courier New', Courier, monospace;
   justify-content: center;
+}
+
+/* ---------------------------------------------------------*/
+/* -------------------------------- ADD PITCH --------------*/
+/* ---------------------------------------------------------*/
+
+.page-header {
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.tag_join p {
+  padding: 0;
+}
+
+.url_button {
+  padding-top: 10px;
+}
+
+/* ---------------------------------------------------------*/
+/* -------------------------------- EDIT PITCH --------------*/
+/* ---------------------------------------------------------*/
+
+.no_edit {
+  text-decoration: line-through;
 }

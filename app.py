@@ -3,7 +3,8 @@ import random
 import json
 import bcrypt
 from random import randint
-from flask import Flask, render_template, redirect, request, session, url_for, flash
+from flask import Flask, render_template, redirect, request, session, url_for, flash, abort
+from flask_login import login_required, current_user
 from flask_pymongo import PyMongo, pymongo
 from bson.objectid import ObjectId
 from bson import json_util
@@ -76,20 +77,36 @@ def logout():
 
 ''''''
 
-
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
 def user_pitches(sort_field):
     username = session.get('username')
-    pitches = _pitches.find({'username': username, "is_del": False}).sort(sort_field, pymongo.DESCENDING)
+    status_filter = request.args.get('is_greenlit')
     status = mongo.db.status.find()
-    count = _pitches.count({'username' : username})
+
+    if status_filter:
+        pitches = _pitches.find(
+            {'username': username,
+            'is_greenlit': status_filter,
+            "is_del": False}).sort(sort_field, pymongo.DESCENDING)
+    else:
+        pitches = _pitches.find(
+            {'username': username,
+            "is_del": False}).sort(sort_field, pymongo.DESCENDING)
+
+    count_all = _pitches.find({'is_del': False , 'username': username}).count()
+
+    count_status = pitches.count()
+
+    if status_filter and count_status == 0:
+        flash("You currently no pitches with that status!")
+
     if session.get('logged_in') == True:
         return render_template("user_pitches.html",
                                 pitches=pitches, 
                                 tags=tags,
                                 users=users,
-                                count=count,
+                                count=count_all,
                                 statuses=status
                                 )
     else:
@@ -102,9 +119,9 @@ def all_pitches(sort_field):
     username = session.get('username')
     genre_filter = request.args.get('genre_name')
     if genre_filter:
-        pitches = _pitches.find({'genre_name': genre_filter }).sort(sort_field, pymongo.DESCENDING)
+        pitches = _pitches.find({'genre_name': genre_filter, 'username': {'$ne': username} }).sort(sort_field, pymongo.DESCENDING)
     else:
-        pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
+        pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
 
     count = pitches.count()
     if count == 0:
@@ -112,7 +129,6 @@ def all_pitches(sort_field):
     votes = _votes.find_one()
     genres = _genres.find()
     status = mongo.db.status.find()
-    # print(request.args.get('genre_name'))
     return render_template("all_pitches.html",
                             pitches=pitches,
                             tags=tags,
@@ -143,40 +159,20 @@ def all_but(sort_field):
                             genres=genres)
     else:
         return redirect(url_for('all_pitches'))
-    
-
-@app.route('/filter_genre', defaults={'gfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
-@app.route('/filter_genre/<gfilter>/<sort_field>')
-def filter_genre(gfilter, sort_field):
-    pitch_by_genre = _pitches.find({'genre_name': gfilter}).sort(sort_field, pymongo.DESCENDING)
-    count = pitch_by_genre.count()
-    if count == 0:
-        flash("Currently no entries exist under that genre, maybe you should add one!")
-    return render_template("filter_genre.html",
-                            pitches_by_genre=pitch_by_genre,
-                            count=count)
-
-
-@app.route('/filter_status', defaults={
-    'sfilter': {'$regex': '.*'}, 'sort_field': 'last_modified'})
-@app.route('/filter_status/<sfilter>/<sort_field>')
-def filter_status(sfilter, sort_field):
-    username = session.get('username')
-    pitch_by_status = _pitches.find({
-        'username': username,'is_greenlit': sfilter
-        }).sort(sort_field, pymongo.DESCENDING)
-    return render_template("filter_status.html",
-                            pitches_by_status=pitch_by_status,
-                            username=username)
 
 
 @app.route('/show_users')
 def show_users():
     usercoll = mongo.db.users
     username = session.get('username')
+    users = request.args.get('username')
+    sum_votes = _pitches.aggregate([{ '$match': { 'username': {'$regex': '.*'} }}, { '$group': { '_id' : "$username", 'sum' : { '$sum': "$votes" } } }] )
+    pitches = _pitches.find()
     users = usercoll.find()
     return render_template("show_users.html",
-                            users=users)
+                            users=users,
+                            pitches=pitches,
+                            sum_votes=sum_votes)
 
 
 @app.route('/add_pitch')
@@ -191,12 +187,15 @@ def add_pitch():
     tag_titles_list = [title for title in _tag_titles]
     _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
     tag_locations_list = [location for location in _tag_locations]
-    return render_template('add_pitch.html',
+    if session.get('logged_in') == True:
+        return render_template('add_pitch.html',
                             genres = genre_list,
                             directors=director_list,
                             actors=actor_list,
                             tag_titles=tag_titles_list,
                             tag_locations=tag_locations_list)
+    else:
+        return render_template('my404.html')
 
 
 @app.route('/insert_pitch', methods=['POST'])
@@ -355,7 +354,15 @@ def delete_pitch():
     pitches = mongo.db.pitches
     pitches.remove({'is_del': True})
     flash('Hey Admin, you have flushed out the deleted pitches!')
-    return redirect(url_for('user_pitches'))
+    return redirect(url_for('all_pitches'))
+
+
+@app.route('/delete_user/<user_id>', methods=["POST"])
+def delete_user(user_id):
+    users = mongo.db.users
+    users.remove({'_id': ObjectId(user_id)})
+    flash('User has been deleted.')
+    return redirect(url_for('show_users'))
 
 
 @app.route("/show_stats")

@@ -2,11 +2,37 @@
 {% block content %}
 
 <h3>Users</h3>
+
+<div class="col-12 flash-del">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <h5>{{ message }}</h5>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
 {% for user in users %}
-<ul>
-    <li>{{ user.username }}</li>
-</ul>
+{% if not user.username == 'admin' %}
+<div class="row">
+    <div class="col-3">{{ user.username }}</div>
+
+    <div class="col-3">
+        <form action="{{ url_for('delete_user', user_id=user._id) }}" method="POST">
+            <button class="admin-flush alert-danger" type="submit">Delete User</button>
+        </form>
+    </div>
+
+    {% if user.username == sum_votes._id %}
+    <div class="col-3">
+        <p>{{sum_votes.sum}}</p>
+    </div>
+    {% endif %}
+
+</div>
 <hr>
+{% endif %}
 {% endfor %}
 
 

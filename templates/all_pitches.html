@@ -16,12 +16,11 @@
     </div>
     <div class="row">
         <div class="col-4">
-            <form>
-                <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
+            <form id="genre_form" action="{{ url_for('all_pitches') }}">
+                <select onchange="this.form.submit()" name="genre_name" id="genre_name">
                     <option value="" disabled selected>Filter by Genre</option>
                     {% for genre in genres %}
-                    <option value="{{ url_for('all_pitches', sort_field='created_at', genre_name=genre.genre_name )}}">
-                        {{ genre.genre_name }}</option>
+                    <option value="{{ genre.genre_name }}">{{ genre.genre_name|title }}</option>
                     {% endfor %}
                 </select>
             </form>
@@ -33,16 +32,10 @@
             </form>
         </div>
         {% endif %}
-        <div class="col-2">
-            {% if session['username'] and session['username']|lower != 'admin'  %}
-            <button type="button"><a href="{{ url_for('all_but', sort_field='last_modified') }}">Remove
-                    Yourself</a></button>
-            {% endif %}
-        </div>
         <div class="col-4">
             <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-            <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                    update</a></button>
+            <!-- <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
+                    update</a></button> -->
         </div>
     </div>
     <div class="row">

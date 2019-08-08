@@ -14,17 +14,6 @@ $(document).ready(function () {
     p.hide();
     togglePitchDiv()
 
-    // $('.vote_button').click(function () {
-    //     var buttId = $(this).attr("id");
-    //     var divId = buttId.replace("vote-", "");
-
-    //     $(window).on('load', function () {
-    //         var elmnt = document.getElementById(divid)
-    //         elmnt.scrollIntoView();
-    //     });
-
-    // });
-
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
