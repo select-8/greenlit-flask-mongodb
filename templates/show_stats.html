@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
+{% set active_page = "show_stats" %}
 
 {% block content %}
 
-<div>
-    <h3>Users</h3>
-    <div id="user-pie"></div>
-</div>
+<div class="row">
+    <div class="col-4">
+        <h3>Users</h3>
+        <div id="user-pie"></div>
+    </div>
 
-<div>
-    <h3>Total Votes Per User</h3>
-    <div id="user-votes-chart"></div>
+    <div class="col-4">
+        <h3>Total Votes Per User</h3>
+        <div id="user-votes-chart"></div>
+    </div>
 </div>
-
 
 {% endblock %}

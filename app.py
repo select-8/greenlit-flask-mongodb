@@ -39,6 +39,7 @@ def index():
     return render_template('index.html', count=count)
 
 
+""" PUT INTO SEPERATE FILE """
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
@@ -47,7 +48,10 @@ def login():
         if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['username'] = request.form['username']
             session['logged_in'] = True
-            return redirect(url_for('user_pitches'))
+            if session['username'] == 'admin':
+                return redirect(url_for('all_pitches'))
+            else:
+                return redirect(url_for('user_pitches'))
         return 'Invalid Password'
     return render_template('login.html', error = error)
 
@@ -70,6 +74,8 @@ def logout():
    session.clear()
    return redirect(url_for('login'))
 
+''''''
+
 
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
@@ -84,24 +90,41 @@ def user_pitches(sort_field):
                                 tags=tags,
                                 users=users,
                                 count=count,
-                                statuses=status)
+                                statuses=status
+                                )
     else:
         return redirect(url_for('all_pitches'))
 
 
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
-@app.route('/all_pitches/<sort_field>')
+@app.route('/all_pitches/<sort_field>') # query parameter
 def all_pitches(sort_field):
     username = session.get('username')
-    pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
+    genre_filter = request.args.get('genre_name')
+    if genre_filter:
+        pitches = _pitches.find({'genre_name': genre_filter }).sort(sort_field, pymongo.DESCENDING)
+    else:
+        pitches = _pitches.find().sort(sort_field, pymongo.DESCENDING)
+
+    count = pitches.count()
+    if count == 0:
+        flash("Currently no entries exist under that genre, maybe you should add one!")
     votes = _votes.find_one()
     genres = _genres.find()
     status = mongo.db.status.find()
+    # print(request.args.get('genre_name'))
     return render_template("all_pitches.html",
                             pitches=pitches,
                             tags=tags,
                             votes=votes,
-                            genres=genres)
+                            genres=genres,
+                            count=count)
+
+
+@app.route('/test')
+def test():
+    print(request.args.get('age'))
+    return render_template('test.html')
 
 
 @app.route('/all_but', defaults={'sort_field': 'last_modified'})
@@ -339,7 +362,7 @@ def delete_pitch():
 def show_stats():
     return render_template("show_stats.html")
 
-
+""" PUT INTO SEPERATE FILE """
 @app.route("/get_data")
 def get_data():
     stat_data = []
@@ -348,6 +371,8 @@ def get_data():
         stat_data.append(data)
     stat_data = json.dumps(stat_data, default=json_util.default)
     return stat_data
+
+''''''
 
 
 if __name__ == '__main__':

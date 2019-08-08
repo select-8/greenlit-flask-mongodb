@@ -6,7 +6,6 @@
         type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
-    <script type="text/javascript" href="{{ url_for('static', filename='js/script.js') }}"></script>
     <script type="text/javascript" src="static/js/d3.min.js"></script>
     <script type="text/javascript" src="static/js/crossfilter.min.js"></script>
     <script type="text/javascript" src="static/js/dc.min.js"></script>
@@ -58,6 +57,9 @@
                 </ul>
                 {%  endfor %}
             </div>
+            <div class="nav navbar-brand">
+                    <span>{{ session['username']|upper }}</span>
+            </div>
             <div class="nav navbar-nav order-md-last">
                 {% for link, id, text in navbar_in[-1:] %}
                 <ul class="nav navbar-nav">
@@ -67,6 +69,7 @@
                 {% endfor %}
             </div>
 
+
             {% elif session['username']|lower == 'admin'  %}
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
                 {% for link, id, text in navbar_admin[:3] %}
@@ -75,6 +78,9 @@
                         <a class="nav-link" href="{{ link|e }}">{{ text }}</a></li>
                 </ul>
                 {%  endfor %}
+            </div>
+            <div class="nav navbar-brand">
+                    <span>{{ session['username']|upper }}</span>
             </div>
             <div class="nav navbar-nav order-md-last">
                 {% for link, id, text in navbar_admin[-1:] %}
@@ -116,54 +122,9 @@
         <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/graphs.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
 
         <!-- // https://stackoverflow.com/questions/40792796/using-jquery-to-provide-onclick-event-within-inside-a-jinja2-loop -->
-        <script>
-            function togglePitchDiv() {
-                $('.drop_down').click(function () {
-                    var currentId = $(this).attr("id");
-                    var flaskMade = currentId.replace("down-drop-", "");
-                    $('#content-' + flaskMade).slideToggle("slow");
-                });
-            };
-
-            $(document).ready(function () {
-                const p = $(".panel");
-                p.hide();
-                togglePitchDiv()
-
-                $('.vote_button').click(function () {
-                    var buttId = $(this).attr("id");
-                    var divId = buttId.replace("vote-", "");
-
-                    // var elmnt = document.getElementById('buttId');
-                    // console.log(buttId)
-                    // elmnt.scrollIntoView();
-
-
-                    $(window).on('load', function () {
-                        var elmnt = document.getElementById(divid)
-                        elmnt.scrollIntoView();
-                    });
-
-                    // $.ajax("{{ url_for('all_pitches') }}").done(function (reply) {
-                    //         // var divid = '#thisPitch-' + divId
-                    //         var elmnt = document.getElementById(divid)
-                    //         elmnt.scrollIntoView();
-                    //     })
-                    //     .fail(function (jqXHR, status, error) {
-                    //         console.log("error: " + error);
-                    //     })
-                    //     .always(function () {
-                    //         console.log("complete");
-                    //     });
-                });
-            });
-
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            })
-        </script>
 
 </body>
 

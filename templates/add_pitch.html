@@ -2,37 +2,48 @@
 
 
 {% block content %}
-<br>
-<h3>Welcome {{ session['username']|title }}</h3>
-<h5>Add Your Pitch</h5>
-<br>
-<form action="{{ url_for('insert_pitch') }}" method="POST"">
-    <div class=" container input-field input-title ">
-        <textarea class=" dt" id="title" name="title" placeholder="Give your film a title" required></textarea>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 page-header">
+            <h3>Welcome {{ session['username']|title }} <br>
+                <small>Use this form to add your pitch, and don't forget to submit in <strong>Your Pitches</strong>.</small></h3>
+        </div>
     </div>
-    <br>
-    <div class="container">
+</div>
+
+<div class="container">
+    <form action="{{ url_for('insert_pitch') }}" method="POST">
         <div class="row">
-            <div class="col-12 col-md-3 input-field" style="width:200px;">
-                <select id="genre" name="genre_name">
+            <div class="col-12 col-md-6 form-group">
+                <!-- <label for="title">Your New Movie Idea Needs a Title</label> -->
+                <textarea class="form-control dt" id="title" name="title" placeholder="Give your film a title" rows="1"
+                    cols="2" required></textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-3">
+                <select class="custom-select custom-select-lg mb-3" id="genre" name="genre_name">
                     <option value="" disabled selected>Choose Genre</option>
                     {% for genre in genres|sort(attribute='genre_name') %}
-                    <option value="{{genre.genre_name}}">{{genre.genre_name|title}}</option>
+                    <option value="{{genre.genre_name}}" required>{{genre.genre_name|title}}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="col-12 col-md-3 input-field" style="width:200px;">
-                <select id="director" name="director_name">
-                    <option value="" disabled selected>Choose Director</option>
+            <div class="col-12 col-md-3">
+                <select class="custom-select custom-select-lg mb-3" id="director" name="director_name">
+                    <option value="(User couldn't be bothered picking a director, this will not pass!!!)" selected>
+                        Choose Director</option>
                     {% for director in directors|sort(attribute='director') %}
                     <option value="{{director.director}}">{{director.director}}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="col-12 col-md-3 input-field" style="width:200px;">
-                <select id="actor" name="actor">
+            <div class="col-12 col-md-3">
+                <select class="custom-select custom-select-lg mb-3" id="actor" name="actor">
                     <option value="" disabled selected>Choose Actor</option>
                     {% for actor in actors|sort(attribute='actor') %}
                     <option value="{{actor.actor}}">{{actor.actor}}</option>
@@ -40,63 +51,61 @@
                 </select>
             </div>
 
-        </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-12 input-field input-desc">
-                <textarea class="dt" maxlength="311" id="description" name="discription" cols="30" rows="5"
-                    placeholder="Describe your film in 311 characters"></textarea>
+
+            <div class="row">
+                <div class="col-12 input-field input-desc">
+                    <textarea class="dt" maxlength="311" id="description" name="discription" cols="30" rows="5"
+                        placeholder="Describe your film in 311 characters"></textarea>
+                </div>
             </div>
-        </div>
-    </div>
 
 
-    <div class="container">
-        <div class="row">
-            <div class="col-12 col-md-3 input-field">
-                <select id="film_1" name="film_1">
-                    <option value="" disabled selected>Film 1</option>
-                    {% for title in tag_titles %}
-                    <option value="{{title.title}}">{{title.title}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12 col-md-1">
-                <p>Meets:</p>
-            </div>
-            <div class="col-12 col-md-3 input-field">
-                <select id="film_2" name="film_2">
-                    <option value="" disabled selected>Film 2</option>
-                    {% for title in tag_titles %}
-                    <option value="{{title.title}}">{{title.title}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12 col-md-3 input-field">
-                <select id="location" name="location">
-                    <option value="" disabled selected>Location</option>
-                    {% for location in tag_locations %}
-                    <option value="{{location.location}}">{{location.location}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
 
-    <br>
-    <div class="container">
-        <div>
-            <button type="submit" action="{{ url_for('insert_pitch') }}">Add Your Pitch
-            </button>
-        </div>
 
-        <br>
-        <div>
-            <button><a href="{{ url_for('user_pitches') }}">View Your Pitches</a></button>
-        </div>
-    </div>
-</form>
+            <div class="row">
+                <div class="col-12 col-md-3 input-field">
+                    <select id="film_1" name="film_1">
+                        <option value="" disabled selected>Film 1</option>
+                        {% for title in tag_titles %}
+                        <option value="{{title.title}}">{{title.title}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-1">
+                    <p>Meets:</p>
+                </div>
+                <div class="col-12 col-md-3 input-field">
+                    <select id="film_2" name="film_2">
+                        <option value="" disabled selected>Film 2</option>
+                        {% for title in tag_titles %}
+                        <option value="{{title.title}}">{{title.title}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 input-field">
+                    <select id="location" name="location">
+                        <option value="" disabled selected>Location</option>
+                        {% for location in tag_locations %}
+                        <option value="{{location.location}}">{{location.location}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <br>
+
+                <div>
+                    <button type="submit" action="{{ url_for('insert_pitch') }}">Add Your Pitch
+                    </button>
+                </div>
+
+                <br>
+                <div>
+                    <button><a href="{{ url_for('user_pitches') }}">View Your Pitches</a></button>
+                </div>
+
+    </form>
+</div>
 
 <div class="flash-del">
     {% with messages = get_flashed_messages() %}
