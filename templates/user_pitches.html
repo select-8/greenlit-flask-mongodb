@@ -33,23 +33,23 @@
 
     <div class="row choices">
         <div class="col-3">
-            <button><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button>
+            <button type="button" class="btn btn-light"><a href="{{ url_for('add_pitch') }}">Add New Pitch</a></button>
         </div>
         <div class="col-3">
-            <button><a href="{{ url_for('user_pitches', sort_field='votes') }}">Sort by votes</a></button>
+            <button type="button" class="btn"><a href="{{ url_for('user_pitches', sort_field='votes') }}">Sort by votes</a></button>
         </div>
         <div class="col-3">
-            <button type="button"><a href="{{ url_for('user_pitches', sort_field='last_modified') }}">Sort by last
+            <button type="button" class="btn"><a href="{{ url_for('user_pitches', sort_field='last_modified') }}">Sort by last
                     updated</a></button>
         </div>
 
         <div class="col-3">
             <form>
-                <select onchange="window.open(this.options[this.selectedIndex].value,'_self')">
+                <select class="custom-select custom-select-sm mb-3" onchange="window.open(this.options[this.selectedIndex].value,'_self')">
                     <option value="" disabled selected>Filter by Status</option>
                     {% for status in statuses %}
                     <option value="{{ url_for('user_pitches', sort_field='created_at', is_greenlit=status.is_greenlit )}}">
-                        {% if status.is_greenlit == '1' %} Greenlit {% else %} Redlit {% endif %}</option>
+                        {% if status.is_greenlit == '1' %} Green {% else %} Red {% endif %}</option>
                     {% endfor %}
                 </select>
             </form>
@@ -82,7 +82,7 @@
                 </span>
                 {% else %}
                 <button class="btn" type="button"><a
-                        href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">{{ 3 - pitch.num_edit }} Edits left</a></button>
+                        href="{{ url_for('edit_pitch', pitch_id=pitch._id) }}">{{ 3 - pitch.num_edit }} Edits remaining</a></button>
                 {% endif %}
             </div>
             <div class="col-1">
@@ -96,9 +96,9 @@
                     {% endif %}
                 </form>
             </div>
-            <div class="col-1 vote-count">
-                <span
-                    class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
+            <div class="col-1  text-center">
+                <p
+                    class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}" >{{ pitch.votes }}</p><p class="vote_text">Votes</p>
             </div>
             <div class="col-1 remove_pitch">
                 <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
@@ -111,8 +111,8 @@
                 <div class="col-10 offset-1 pitch-text">
                     <p>
                         {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
-                        {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
-                        {{ pitch.actor }}.
+                        <strong>{{ pitch.genre_name|title }}</strong> movie to be directed by <strong>{{ pitch.director_name }}</strong> and starring
+                        <strong>{{ pitch.actor }}</strong>.
                     </p>
                 </div>
                 <div class="col-10 offset-1 pitch-text">

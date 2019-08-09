@@ -85,9 +85,9 @@
                     {% endif %}
                 </form>
             </div>
-            <div class="col-1 vote_count">
-                <span
-                    class="lit-dot text-center {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</span>
+            <div class="col-1  text-center">
+                <p
+                    class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}" >{{ pitch.votes }}</p><p class="vote_text">Votes</p>
             </div>
             {% if session['username']|lower == 'admin' %}
             <div class="col-1 remove_pitch">

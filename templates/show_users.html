@@ -4,17 +4,29 @@
 <h3>Users</h3>
 
 <div class="col-12 flash-del">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <h5>{{ message }}</h5>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <h5>{{ message }}</h5>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+
+{% if users.username == sum_votes._id %}
+
+<p>{{users.username}}</p>
+<p>{{sum_votes._id}}</p>
+
+{% endif %}
+
+
+
+
 
 {% for user in users %}
-{% if not user.username == 'admin' %}
+{% if user.username != 'admin' %}
 <div class="row">
     <div class="col-3">{{ user.username }}</div>
 
@@ -24,16 +36,22 @@
         </form>
     </div>
 
-    {% if user.username == sum_votes._id %}
+</div>
+<hr>
+{% elif not user.username == 'admin'  %}
+<div class="row">
+    <div class="col-3">{{ user.username }}</div>
     <div class="col-3">
-        <p>{{sum_votes.sum}}</p>
+        <form action="{{ url_for('delete_user', user_id=user._id) }}" method="POST">
+            <button class="admin-flush alert-danger" type="submit">Delete User</button>
+        </form>
     </div>
-    {% endif %}
-
 </div>
 <hr>
 {% endif %}
+
 {% endfor %}
+
 
 
 {% endblock %}

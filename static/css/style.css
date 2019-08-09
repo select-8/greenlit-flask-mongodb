@@ -143,12 +143,13 @@ hr {
 }
 
 .lit-dot {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   height: 25px;
   width: 25px;
   text-align: center;
   vertical-align: middle;
-  border-radius: 50%;
+  padding: 0;
+  margin: 0;
   display: inline-block;
   color: white;
 }
@@ -181,11 +182,21 @@ hr {
   background-color: #2d7d42;
 }
 
+.vote_text {
+  padding: 0;
+  margin: 0;
+}
+
 
 .pitch-text {
   padding: 0;
+  margin-top: 5px;
   font-family: 'Courier New', Courier, monospace;
   justify-content: center;
+}
+
+.pitch-img {
+  margin-bottom: 5px;
 }
 
 /* ---------------------------------------------------------*/
