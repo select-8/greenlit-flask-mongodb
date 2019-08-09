@@ -1,6 +1,6 @@
-/* body {
-  background-color: #434343;
-} */
+body {
+  padding-bottom: 500px;
+}
 
 .row {
   margin-left: 0;
@@ -30,8 +30,8 @@ hr {
 
 /* --------------------------------------PITCH CONTAINERs-------- */
 .pitches_main {
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   margin-top: 0;
   margin-bottom: 0;
   background-color: #e5e5e5;
@@ -83,19 +83,25 @@ hr {
 .choices {
   padding-bottom: 10px;
 }
-
-/* textarea .dt {
-  width: 300px;
-  height: 100px;
+.dt {
   padding: 5px 5px;
   box-sizing: border-box;
   border: 2px solid #ccc;
   border-radius: 4px;
   background-color: #f8f8f8;
-  font-size: 14px;
-  resize: none;
-  outline: none;
-} */
+  font-size: 1.5rem;
+  color: #717171;
+} 
+
+.title_box {
+  padding: 5px 5px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 1rem;
+  color: #717171;
+}
 
 .flash-del h5 {
   text-decoration: underline;
@@ -187,16 +193,11 @@ hr {
   margin: 0;
 }
 
-
 .pitch-text {
   padding: 0;
   margin-top: 5px;
   font-family: 'Courier New', Courier, monospace;
   justify-content: center;
-}
-
-.pitch-img {
-  margin-bottom: 5px;
 }
 
 /* ---------------------------------------------------------*/
@@ -213,7 +214,8 @@ hr {
 }
 
 .url_button {
-  padding-top: 10px;
+  padding-top: 20px;
+  /* margin-bottom: 100px; */
 }
 
 /* ---------------------------------------------------------*/
@@ -222,4 +224,44 @@ hr {
 
 .no_edit {
   text-decoration: line-through;
+}
+
+.banner_text {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.title_head {
+  text-align: center;
+}
+
+/* ---------------------------------------------------------*/
+/* -------------------------------- SHOW ALL PITCHES / USER PITCHES --------------*/
+/* ---------------------------------------------------------*/
+
+.all_pitches_container {
+  margin-top: 30px;
+}
+
+.tag_text {
+  letter-spacing: .3em;
+  font-size: 1.1em;
+  background-color: white;
+  color: black;
+}
+
+.pitch-img {
+  margin-bottom: 20px;
+}
+
+.pitch_short {
+  letter-spacing: .3em;
+  font-size: 1em;
+  background-color: grey;
+  color: #fafafa;
+  padding: 5px 5px;
+}
+
+.pitch_desc {
+  text-align: left;
 }

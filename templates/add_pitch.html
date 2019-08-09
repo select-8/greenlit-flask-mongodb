@@ -7,16 +7,16 @@
     <div class="row justify-content-md-center">
         <div class="col-12 page-header text-center">
             <h2>{{ session['username']|title }}, add your pitch here (and don't forget to
-                    <strong>submit</strong>)!</h2>
+                <strong>submit</strong>)!</h2>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <form action="{{ url_for('insert_pitch') }}" method="POST">
+    <form action="{{ url_for('insert_pitch') }}" method="POST" novalidate>
         <div class="row justify-content-md-center">
             <div class="col-12 col-md-6 form-group">
-                <textarea class="form-control dt" id="title" name="title" placeholder="Give your film a title" rows="2"
+                <textarea class="form-control title_box" id="title" name="title" placeholder="Give your film a title" rows="2"
                     cols="2" required></textarea>
             </div>
         </div>
@@ -98,29 +98,26 @@
         </div>
 
         <div class="row justify-content-md-center url_button">
-            <div class="col-12 text-center">
+            <div class="col-2 text-center">
                 <button type="submit" class="btn btn-success" action="{{ url_for('insert_pitch') }}">Add Your Pitch
                 </button>
             </div>
-        </div>
-        <div class="row justify-content-md-center url_button">
-            <div class="col-12 text-center">
-                <button class="btn btn-link"><a href="{{ url_for('user_pitches') }}">View Your Pitches</a></button>
+            <div class="col-4 flash-del">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <h5>{{ message }}</h5>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            <div class="col-2 text-center">
+                <button class="btn btn-basic"><a href="{{ url_for('user_pitches') }}">View Your Pitches</a></button>
             </div>
         </div>
 
+
     </form>
 </div>
-
-<div class="flash-del">
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <h5>{{ message }}</h5>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-</div>
-
 
 {% endblock %}

@@ -32,6 +32,10 @@ _votes = mongo.db.votes
 created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('my404.html'), 404
+
 @app.route('/')
 def index():
     error = None
@@ -124,8 +128,11 @@ def all_pitches(sort_field):
         pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
 
     count = pitches.count()
-    if count == 0:
+    if count == 0 and username != 'admin':
         flash("Currently no entries exist under that genre, maybe you should add one!")
+    elif count == 0:
+        flash("Currently no entries exist under that genre")
+
     votes = _votes.find_one()
     genres = _genres.find()
     status = mongo.db.status.find()
@@ -134,7 +141,8 @@ def all_pitches(sort_field):
                             tags=tags,
                             votes=votes,
                             genres=genres,
-                            count=count)
+                            count=count,
+                            genre_filter=genre_filter)
 
 
 @app.route('/test')
@@ -166,7 +174,10 @@ def show_users():
     usercoll = mongo.db.users
     username = session.get('username')
     users = request.args.get('username')
-    sum_votes = _pitches.aggregate([{ '$match': { 'username': {'$regex': '.*'} }}, { '$group': { '_id' : "$username", 'sum' : { '$sum': "$votes" } } }] )
+    sum_votes = _pitches.aggregate([
+        { '$match': { 'username': {'$regex': '.*'} }},
+        { '$group': { '_id' : "$username", 'sum' : { '$sum': "$votes" } } }
+        ])
     pitches = _pitches.find()
     users = usercoll.find()
     return render_template("show_users.html",
@@ -201,13 +212,13 @@ def add_pitch():
 @app.route('/insert_pitch', methods=['POST'])
 def insert_pitch():
     usercoll = mongo.db.users
-    # username = session['username']
     username = session.get('username')
     the_user = usercoll.find_one({'username': username})
     tags = mongo.db.tags
     pitch = mongo.db.pitches
     title = request.form.get('title')
     genre_name = request.form.get('genre_name')
+    print(genre_name)
     director_name = request.form.get('director_name')
     actor_name = request.form.get('actor')
     description = request.form.get('discription')
@@ -217,24 +228,19 @@ def insert_pitch():
     tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
     tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
     loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
-    pitch.insert_one({'username': the_user['username'], 'created_at': created_at,
-                    'last_modified': last_modified,'title': title,
-                    'genre_name': genre_name, 'director_name': director_name,
-                    'actor': actor_name, 'description': description,
-                    'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
-                    'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
-                    'is_del':False, 'votes':0, 'is_greenlit': '0', 'num_edit': 0
-                    })
-    # return redirect(url_for('insert_vote'))
-    flash('your pitch has been added')
+    if genre_name == None or title == '':
+        flash("Come on lazy, you'll never make it in the biz with that attitude. Give your pitch a title and genre at least!!!")
+    else:
+        pitch.insert_one({'username': the_user['username'], 'created_at': created_at,
+                'last_modified': last_modified,'title': title,
+                'genre_name': genre_name, 'director_name': director_name,
+                'actor': actor_name, 'description': description,
+                'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
+                'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
+                'is_del':False, 'votes':0, 'is_greenlit': '0', 'num_edit': 0
+                })
+        flash('your pitch has been added')
     return redirect(url_for('add_pitch'))
-    # find_one_and_update
-
-# @app.route('/insert_vote', methods=["POST", "GET"])
-# def insert_vote():
-#     lastest_pitch = _pitches.find({},{"_id": 1, 'username': 1}).sort("created_at", -1).limit(1);
-#     _votes.insert(lastest_pitch)
-#     return redirect(url_for('all_pitches'))
 
 
 @app.route('/edit_pitch/<pitch_id>')
@@ -302,10 +308,10 @@ def is_greenlit(pitch_id):
                         _pitches.update( {'_id': ObjectId(pitch_id)},
                         {"$set": {'is_greenlit':'0'}})
                         flash('no way lad, not Matt Damon')
-                    elif va == 'Spike Jones' and vd == 'David O Russell':
+                    elif va == 'Christian Bale' and vd == 'David O Russell':
                         _pitches.update( {'_id': ObjectId(pitch_id)},
                         {"$set": {'is_greenlit':'0'}})
-                        flash('those two will never work together, try again!')
+                        flash('Bale and O Russell will never work together after what happened on American Hustle, make an edit and try again.')
                     else:
                         _pitches.update( {'_id': ObjectId(pitch_id)},
                         {"$set": {'is_greenlit':random_is_greenlit}})

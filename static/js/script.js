@@ -4,9 +4,9 @@ $(document).ready(function () {
         $('.drop_down').click(function () {
             var currentId = $(this).attr("id");
             var flaskMade = currentId.replace("down-drop-", "");
-            var pDiv = '#content-' + flaskMade
             $('#content-' + flaskMade).slideToggle("slow");
-            pDiv.scrollIntoView();
+            return false;
+    
         });
     };
 

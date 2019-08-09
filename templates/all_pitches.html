@@ -7,36 +7,37 @@
 {{ text[0]|upper}}{{text[1:] }}
 {% endmacro %}
 
-<div class="container">
-
+<div class="container all_pitches_container">
     <div class="row">
-        <div class="col-4 pitch-title">
-            <p>All Pitches</p>
+        <div class="col-1">
+            <p>Filter by Genre:</p>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
+        <div class="col-4 genre_dd">
             <form id="genre_form" action="{{ url_for('all_pitches') }}">
-                <select onchange="this.form.submit()" name="genre_name" id="genre_name">
-                    <option value="" disabled selected>Filter by Genre</option>
+                <select onchange="this.form.submit()" name="genre_name" id="genre_name"
+                    class="custom-select custom-select-md mb-3">
+
+                    <option value="Filter by genre" disabled selected>{{ genre_filter|title }}</option>
+
+                    <!-- <option value="Filter by genre" disabled selected>Filter by genre</option> -->
+
                     {% for genre in genres %}
                     <option value="{{ genre.genre_name }}">{{ genre.genre_name|title }}</option>
                     {% endfor %}
                 </select>
             </form>
         </div>
+        <div class="col-2 offset-md-1">
+            <button class="btn btn-outline-primary"><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by
+                    votes</a></button>
+        </div>
         {% if session['username'] and session['username']|lower == 'admin' %}
         <div class="col-4">
             <form action="{{ url_for('delete_pitch') }}" method="POST">
-                <button class="admin-flush alert-danger" type="submit">Flush all removed pitches</button>
+                <button class="btn btn-danger admin-flush" type="submit">Flush all removed pitches</button>
             </form>
         </div>
         {% endif %}
-        <div class="col-4">
-            <button><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by votes</a></button>
-            <!-- <button type="button"><a href="{{ url_for('all_pitches', sort_field='last_modified') }}">Sort by last
-                    update</a></button> -->
-        </div>
     </div>
     <div class="row">
         <div class="col-12 flash-del">
@@ -53,9 +54,10 @@
     </div>
 </div>
 
-{% for pitch in pitches %}
-{% if pitch.is_del == false %}
 <div class="container pitches_main">
+    {% for pitch in pitches %}
+    {% if pitch.is_del == false %}
+
     <div class="pitch-collection borderimg" id="thisPitch-{{ pitch._id }}">
         <div class="row banner">
             <div class="col-1 clickers">
@@ -69,6 +71,7 @@
             <div class="col-2 user_title">
                 <h5>Owner: {{ pitch.username|title }}</h5>
             </div>
+            {% if session['username'] != 'admin' %}
             <div class="col-1 vote_block">
                 <form action=" {{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
                     {% if session['username'] == pitch.username %}
@@ -85,9 +88,10 @@
                     {% endif %}
                 </form>
             </div>
+            {% endif %}
             <div class="col-1  text-center">
-                <p
-                    class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}" >{{ pitch.votes }}</p><p class="vote_text">Votes</p>
+                <p class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</p>
+                <p class="vote_text">Votes</p>
             </div>
             {% if session['username']|lower == 'admin' %}
             <div class="col-1 remove_pitch">
@@ -99,25 +103,22 @@
         </div>
         <div id="content-{{ pitch._id }}" class="panel">
             <div class="row">
-                <div class="col-12 pitch-text">
-                    <p>
-                        {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An
-                        {% endif %}
-                        {{ pitch.genre_name|title }} to be directed by {{ pitch.director_name }} and starring
-                        {{ pitch.actor }}.
+                <div class="col-10 offset-1 pitch-text">
+                    <p class="pitch_short">
+                        {% if pitch.genre_name|lower not in ['adventure', 'action'] %} A {% else %} An {% endif %}
+                        <strong>{{ pitch.genre_name|title }}</strong> movie to be directed by
+                        <strong>{{ pitch.director_name }}</strong> and starring
+                        <strong>{{ pitch.actor }}</strong>.
                     </p>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 pitch-text">
-                    <p>{{ sentence_case(pitch.description) }}</p>
+                <div class="col-10 offset-1 pitch-text">
+                    <p class="pitch_desc">{{ pitch.description }}</p>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 pitch-text">
-                    <p>{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}</p>
+                <div class="col-10 offset-1 pitch-text">
+                    <p class="tag_text">{{ pitch.tag.film1 }} meets {{ pitch.tag.film2 }} {{ pitch.tag.location|title }}
+                    </p>
                 </div>
-                <div class="col-12">
+                <div class="col-10 offset-1 pitch-text pitch-img">
                     <img src="{{ url_for('static', filename = pitch.imgs.tag_img1.img ) }}"
                         onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
                         height="100px">
@@ -131,8 +132,8 @@
             </div>
         </div>
     </div>
-</div>
-{% endif %}
-{% endfor %}
 
+    {% endif %}
+    {% endfor %}
+</div>
 {% endblock %}

@@ -5,10 +5,10 @@
 <!-- <h2 class="text-center">GREENLIT</h2> -->
 <br>
 {% if session['username'] %}
-<h3>Welcome to our site {{ session['username']|title }}</h3>
-    {% if count == 0 %}
-    <p>Ready to add your first <a href="{{ url_for('add_pitch') }}">Pitch?</a></p>
-    {% endif %}
+<h3>Welcome {{ session['username']|title }}</h3>
+{% if count == 0 %}
+<p>Ready to add your first <a href="{{ url_for('add_pitch') }}">Pitch?</a></p>
+{% endif %}
 <br>
 
 {% else %}
@@ -18,4 +18,57 @@
 </div>
 {% endif %}
 
+
+<h1>GREENLIT</h1>
+
+<h3>EXAMPLE PITCH</h3>
+
+<div class="container pitches_main">
+    <div class="pitch-collection borderimg" id="thisPitch">
+        <div class="row banner">
+            <div class="col-6">
+                <h3>MY PITCHES TITLE</h3>
+            </div>
+        </div>
+        <div id="contentExample">
+            <div class="row">
+                <div class="col-12 pitch-text">
+                    <p>
+                        a GENRE to be directed DIRECTOR and starring ACTOR
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 pitch-text">
+                    <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus
+                        mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                        quis enim. Donec pede justo!</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 pitch-text">
+                    <p>Alien Meets Alien in Alien</p>
+                </div>
+                <div class="col-12">
+                    <img src="../static/images/alien.jpg"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
+                    <img src="../static/images/alien.jpg"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
+                    <img src="../static/images/alien.jpg"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
+                        height="100px">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <p>Then you can edit X 3 and vote once for eveybody elses and submit and prey and remove</p>
+</div>
+
 {% endblock %}
+
