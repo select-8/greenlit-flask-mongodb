@@ -1,15 +1,14 @@
+from flask_login import login_required, current_user
+from flask_pymongo import PyMongo, pymongo
+from bson.objectid import ObjectId
+from bson import json_util
+from datetime import date, datetime
 import os
 import random
 import json
 import bcrypt
 from random import randint
 from flask import Flask, render_template, redirect, request, session, url_for, flash, abort
-from flask_login import login_required, current_user
-from flask_pymongo import PyMongo, pymongo
-from bson.objectid import ObjectId
-from bson import json_util
-from datetime import date, datetime
-
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET", "randomstring123")
@@ -32,42 +31,47 @@ _votes = mongo.db.votes
 created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('my404.html'), 404
+
 
 @app.route('/')
 def index():
     error = None
     username = session.get('username')
-    count = _pitches.count({'username' : username})
+    count = _pitches.count({'username': username})
     return render_template('index.html', count=count)
 
 
-""" PUT INTO SEPERATE FILE """
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
     if request.method == 'POST':
-        login_user = _users.find_one({'username' : request.form['username']})
-        if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password']) == login_user['password']:
-            session['username'] = request.form['username']
-            session['logged_in'] = True
-            if session['username'] == 'admin':
-                return redirect(url_for('all_pitches'))
-            else:
-                return redirect(url_for('user_pitches'))
+        login_user = _users.find_one({'username': request.form['username']})
+        if bcrypt.hashpw(
+            request.form['pass'].encode(
+                'utf-8'), login_user['password']) == login_user['password']:
+                    session['username'] = request.form['username']
+                    session['logged_in'] = True
+                    if session['username'] == 'admin':
+                        return redirect(url_for('all_pitches'))
+                    else:
+                        return redirect(url_for('user_pitches'))
         return 'Invalid Password'
-    return render_template('login.html', error = error)
+    return render_template('login.html', error=error)
 
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
-        existing_user = _users.find_one({'username' : request.form['username']})
+        existing_user = _users.find_one({'username': request.form['username']})
         if existing_user is None:
-            hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
-            _users.insert({'username' : request.form['username'], 'password' : hashpass})
+            hashpass = bcrypt.hashpw(
+                request.form['pass'].encode('utf-8'), bcrypt.gensalt())
+            _users.insert({
+                'username': request.form['username'], 'password': hashpass})
             session['username'] = request.form['username']
             return redirect(url_for('index'))
         return 'That username already exists!'
@@ -76,8 +80,8 @@ def register():
 
 @app.route('/logout')
 def logout():
-   session.clear()
-   return redirect(url_for('index'))
+    session.clear()
+    return redirect(url_for('index'))
 
 
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
@@ -90,48 +94,55 @@ def user_pitches(sort_field):
     if status_filter:
         pitches = _pitches.find(
             {'username': username,
-            'is_greenlit': status_filter,
-            "is_del": False}).sort(sort_field, pymongo.DESCENDING)
+                'is_greenlit': status_filter,
+                "is_del": False}).sort(sort_field, pymongo.DESCENDING)
     else:
         pitches = _pitches.find(
             {'username': username,
-            "is_del": False}).sort(sort_field, pymongo.DESCENDING)
+                "is_del": False}).sort(sort_field, pymongo.DESCENDING)
 
-    count_all = _pitches.find({'is_del': False , 'username': username}).count()
+    count_all = _pitches.find({'is_del': False, 'username': username}).count()
 
     count_status = pitches.count()
 
     if status_filter and count_status == 0:
         flash("You currently no pitches with that status!")
 
-    if session.get('logged_in') == True:
+    if session.get('logged_in'):
         return render_template("user_pitches.html",
-                                pitches=pitches, 
-                                tags=tags,
-                                users=users,
-                                count=count_all,
-                                statuses=status
-                                )
+                               pitches=pitches,
+                               tags=tags,
+                               users=users,
+                               count=count_all,
+                               statuses=status
+                               )
     else:
         return redirect(url_for('all_pitches'))
 
 
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
-@app.route('/all_pitches/<sort_field>') # query parameter
+@app.route('/all_pitches/<sort_field>')
 def all_pitches(sort_field):
     username = session.get('username')
     genre_filter = request.args.get('genre_name')
     status_filter = request.args.get('is_greenlit')
     if genre_filter:
-        pitches = _pitches.find({'genre_name': genre_filter, 'username': {'$ne': username} }).sort(sort_field, pymongo.DESCENDING)
+        pitches = _pitches.find(
+            {'genre_name': genre_filter, 'username': {
+                '$ne': username}}).sort(sort_field, pymongo.DESCENDING)
     elif status_filter:
-        pitches = _pitches.find({'is_greenlit': status_filter, 'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
+        pitches = _pitches.find(
+            {'is_greenlit': status_filter, 'username': {
+                '$ne': username}}).sort(sort_field, pymongo.DESCENDING)
     else:
-        pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
+        pitches = _pitches.find(
+            {'username':
+                {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
 
     count = pitches.count()
     if count == 0 and username != 'admin':
-        flash("Currently no entries exist under that genre, maybe you should add one!")
+        flash("Currently no entries exist under that genre,\
+              maybe you should add one!")
     elif count == 0:
         flash("Currently no entries exist under that genre")
 
@@ -139,36 +150,30 @@ def all_pitches(sort_field):
     genres = _genres.find()
     status = mongo.db.status.find()
     return render_template("all_pitches.html",
-                            pitches=pitches,
-                            tags=tags,
-                            votes=votes,
-                            genres=genres,
-                            count=count,
-                            statuses=status)
-
-
-@app.route('/test')
-def test():
-    print(request.args.get('age'))
-    return render_template('test.html')
+                           pitches=pitches,
+                           tags=tags,
+                           votes=votes,
+                           genres=genres,
+                           count=count,
+                           statuses=status)
 
 
 @app.route('/show_users')
 def show_users():
     usercoll = mongo.db.users
     username = session.get('username')
-    users = request.args.get('username')
+    sum_pitches = []
     sum_votes = _pitches.aggregate([
-        { '$match': { 'username': {'$regex': '.*'} }},
-        { '$group': { '_id' : "$username", 'sum' : { '$sum': "$votes" } } }
+        {'$match': {'username': {'$regex': '.*'}}},
+        {'$group': {'_id': "$username", 'sum': {'$sum': "$votes"}}}
         ])
     pitches = _pitches.find()
     users = usercoll.find()
-    if session.get('logged_in') == True:
+    if session.get('logged_in'):
         return render_template("show_users.html",
-                                users=users,
-                                pitches=pitches,
-                                sum_votes=sum_votes)
+                               users=users,
+                               pitches=pitches,
+                               sum_votes=sum_votes)
     else:
         return render_template('my404.html')
 
@@ -181,17 +186,17 @@ def add_pitch():
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
-    _tag_titles = mongo.db.tags.find({"type": "title"},{"title": 1})
+    _tag_titles = mongo.db.tags.find({"type": "title"}, {"title": 1})
     tag_titles_list = [title for title in _tag_titles]
-    _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
+    _tag_locations = mongo.db.tags.find({"type": "loc"}, {"location": 1})
     tag_locations_list = [location for location in _tag_locations]
-    if session.get('logged_in') == True:
+    if session.get('logged_in'):
         return render_template('add_pitch.html',
-                            genres = genre_list,
-                            directors=director_list,
-                            actors=actor_list,
-                            tag_titles=tag_titles_list,
-                            tag_locations=tag_locations_list)
+                               genres=genre_list,
+                               directors=director_list,
+                               actors=actor_list,
+                               tag_titles=tag_titles_list,
+                               tag_locations=tag_locations_list)
     else:
         return render_template('my404.html')
 
@@ -215,17 +220,25 @@ def insert_pitch():
     tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
     tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
     loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
-    if genre_name == None or title == '':
-        flash("Come on lazy, you'll never make it in the biz with that attitude. Give your pitch a title and genre at least!!!")
+    if genre_name is None or title == '':
+        flash("Come on lazy, you'll never make it in the biz with that attitude.\
+        Give your pitch a title and genre at least!!!")
     else:
-        pitch.insert_one({'username': the_user['username'], 'created_at': created_at,
-                'last_modified': last_modified,'title': title,
-                'genre_name': genre_name, 'director_name': director_name,
-                'actor': actor_name, 'description': description,
-                'tag':{'film1':tag_film1,'film2':tag_film2,'location':tag_location},
-                'imgs':{'tag_img1':tag_img1,'tag_img2':tag_img2,'loc_img':loc_img },
-                'is_del':False, 'votes':0, 'is_greenlit': '0', 'num_edit': 0
-                })
+        pitch.insert_one({
+            'username': the_user['username'], 'created_at': created_at,
+            'last_modified': last_modified, 'title': title,
+            'genre_name': genre_name, 'director_name': director_name,
+            'actor': actor_name, 'description': description,
+            'tag': {
+                'film1': tag_film1,
+                'film2': tag_film2,
+                'location': tag_location},
+            'imgs': {
+                'tag_img1': tag_img1,
+                'tag_img2': tag_img2,
+                'loc_img': loc_img},
+            'is_del': False, 'votes': 0, 'is_greenlit': '0', 'num_edit': 0
+            })
         flash('your pitch has been added')
     return redirect(url_for('add_pitch'))
 
@@ -238,18 +251,18 @@ def edit_pitch(pitch_id):
     director_list = [directors for directors in _directors]
     _actors = mongo.db.talent.find()
     actor_list = [actors for actors in _actors]
-    _tag_titles = mongo.db.tags.find({"type": "title"},{"title": 1})
+    _tag_titles = mongo.db.tags.find({"type": "title"}, {"title": 1})
     tag_titles_list = [title for title in _tag_titles]
-    _tag_locations = mongo.db.tags.find({"type": "loc"},{"location": 1})
+    _tag_locations = mongo.db.tags.find({"type": "loc"}, {"location": 1})
     tag_locations_list = [location for location in _tag_locations]
     the_pitch = mongo.db.pitches.find_one({"_id": ObjectId(pitch_id)})
-    return render_template('edit_pitch.html', 
-                            pitch=the_pitch, 
-                            genres = genre_list, 
-                            directors = director_list, 
-                            actors=actor_list, 
-                            tag_titles=tag_titles_list, 
-                            tag_locations=tag_locations_list)
+    return render_template('edit_pitch.html',
+                           pitch=the_pitch,
+                           genres=genre_list,
+                           directors=director_list,
+                           actors=actor_list,
+                           tag_titles=tag_titles_list,
+                           tag_locations=tag_locations_list)
 
 
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
@@ -257,51 +270,62 @@ def update_pitch(pitch_id):
     pitches = mongo.db.pitches
     tags = mongo.db.tags
     last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
-    pitches.update( {'_id': ObjectId(pitch_id)},
-    {"$set": {
-        'title':request.form.get('title'),
-        'genre_name':request.form.get('genre_name'),
-        'director_name':request.form.get('director'),
-        'actor':request.form.get('actor'),
-        'description':request.form.get('description'),
-        'tag.film1':request.form.get('tag1'),
-        'tag.film2':request.form.get('tag2'),
-        'tag.location':request.form.get('location'),
-        'imgs.tag_img1':tags.find_one({'title': request.form.get('tag1')}, {"img": 1, "_id": 0}),
-        'imgs.tag_img2':tags.find_one({'title': request.form.get('tag2')}, {"img": 1, "_id": 0}),
-        'imgs.loc_img':tags.find_one({'location': request.form.get('location')}, {"img": 1, "_id": 0}),
-        'last_modified':last_modified,
-        'is_del':False
-        }
-    })
-    pitches.update({ '_id': ObjectId(pitch_id) },{"$inc": {'num_edit': 1} } )
+    pitches.update({'_id': ObjectId(pitch_id)},
+                   {"$set": {
+                    'title': request.form.get('title'),
+                    'genre_name': request.form.get('genre_name'),
+                    'director_name': request.form.get('director'),
+                    'actor': request.form.get('actor'),
+                    'description': request.form.get('description'),
+                    'tag.film1': request.form.get('tag1'),
+                    'tag.film2': request.form.get('tag2'),
+                    'tag.location': request.form.get('location'),
+                    'imgs.tag_img1': tags.find_one({
+                        'title': request.form.get('tag1')}, {
+                            "img": 1, "_id": 0}),
+                    'imgs.tag_img2': tags.find_one({
+                        'title': request.form.get('tag2')}, {
+                            "img": 1, "_id": 0}),
+                    'imgs.loc_img': tags.find_one({
+                        'location': request.form.get('location')}, {
+                            "img": 1, "_id": 0}),
+                    'last_modified': last_modified,
+                    'is_del': False}})
+    pitches.update({'_id': ObjectId(pitch_id)}, {"$inc": {'num_edit': 1}})
     return redirect(url_for('user_pitches'))
 
 
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
 def is_greenlit(pitch_id):
-    random_is_greenlit = str(randint(0,1))
-    num_votes = _pitches.find_one({'_id':ObjectId(pitch_id)},{'votes': 1, '_id': 0})
-    bad_actor = _pitches.find_one({'_id':ObjectId(pitch_id)},{'actor': 1, '_id': 0})
-    bad_director = _pitches.find_one({'_id':ObjectId(pitch_id)},{'director_name': 1, '_id': 0})
+    random_is_greenlit = str(randint(0, 1))
+    num_votes = _pitches.find_one({
+        '_id': ObjectId(pitch_id)}, {'votes': 1, '_id': 0})
+    bad_actor = _pitches.find_one({
+        '_id': ObjectId(pitch_id)}, {'actor': 1, '_id': 0})
+    bad_director = _pitches.find_one({
+        '_id': ObjectId(pitch_id)}, {'director_name': 1, '_id': 0})
     for k, v in num_votes.items():
         if v >= 5:
-            _pitches.update( {'_id': ObjectId(pitch_id)},
-                {"$set": {'is_greenlit':'1'}})
+            _pitches.update({'_id': ObjectId(pitch_id)},
+                            {"$set": {'is_greenlit': '1'}})
         else:
             for ka, va in bad_actor.items():
                 for kd, vd in bad_director.items():
                     if va == 'Matt Damon':
-                        _pitches.update( {'_id': ObjectId(pitch_id)},
-                        {"$set": {'is_greenlit':'0'}})
+                        _pitches.update({'_id': ObjectId(pitch_id)},
+                                        {"$set": {'is_greenlit': '0'}})
                         flash('no way lad, not Matt Damon')
                     elif va == 'Christian Bale' and vd == 'David O Russell':
-                        _pitches.update( {'_id': ObjectId(pitch_id)},
-                        {"$set": {'is_greenlit':'0'}})
-                        flash('Bale and O Russell will never work together after what happened on American Hustle, make an edit and try again.')
+                        _pitches.update({'_id': ObjectId(pitch_id)},
+                                        {"$set": {'is_greenlit': '0'}})
+                        flash('Bale and O Russell will never work together \
+                            after what happened on American Hustle, \
+                                make an edit and try again.')
                     else:
-                        _pitches.update( {'_id': ObjectId(pitch_id)},
-                        {"$set": {'is_greenlit':random_is_greenlit}})
+                        _pitches.update({'_id': ObjectId(pitch_id)},
+                                        {"$set": {
+                                            'is_greenlit':
+                                                random_is_greenlit}})
                         flash("how did you do?")
     return redirect(url_for('user_pitches'))
 
@@ -310,34 +334,37 @@ def is_greenlit(pitch_id):
 def up_votes(pitch_id):
     current_user = session.get('username')
     pitch_in_votes = _votes.count({'pitch_id': ObjectId(pitch_id)})
-    voters = _votes.find_one({'pitch_id':ObjectId(pitch_id)})
-    pitches = _pitches.find_one({'pitch_id':ObjectId(pitch_id)})
-    if session.get('logged_in') == True:
+    voters = _votes.find_one({'pitch_id': ObjectId(pitch_id)})
+    pitches = _pitches.find_one({'pitch_id': ObjectId(pitch_id)})
+    if session.get('logged_in'):
         if pitch_in_votes == 0:
-            _votes.insert_one({ 'pitch_id': ObjectId(pitch_id), 'voters': [current_user] } )
-            _pitches.update({ '_id': ObjectId(pitch_id) },{"$inc": {'votes': 1} } )
+            _votes.insert_one({
+                'pitch_id': ObjectId(pitch_id), 'voters': [current_user]})
+            _pitches.update({
+                '_id': ObjectId(pitch_id)}, {"$inc": {'votes': 1}})
         elif pitch_in_votes > 0 and current_user in voters['voters']:
             _votes.update(
-                {'pitch_id': ObjectId(pitch_id) },
-                {'$pull': { 'voters': current_user } } )
-            _pitches.update({'_id': ObjectId(pitch_id) },{"$inc": {'votes': -1} } )
+                {'pitch_id': ObjectId(pitch_id)},
+                {'$pull': {'voters': current_user}})
+            _pitches.update({
+                '_id': ObjectId(pitch_id)}, {"$inc": {'votes': -1}})
         else:
             _votes.update(
-                {'pitch_id': ObjectId(pitch_id) },
-                {'$push': { 'voters': current_user } } )
-            _pitches.update({'_id': ObjectId(pitch_id) },{"$inc": {'votes': 1} } )
-        return redirect(url_for('all_pitches') )
+                {'pitch_id': ObjectId(pitch_id)},
+                {'$push': {'voters': current_user}})
+            _pitches.update({
+                '_id': ObjectId(pitch_id)}, {"$inc": {'votes': 1}})
+        return redirect(url_for('all_pitches'))
     flash('Please log in or register to vote')
-    return redirect(url_for('all_pitches') )
+    return redirect(url_for('all_pitches'))
 
 
 @app.route('/hide_pitch/<pitch_id>', methods=["POST"])
 def hide_pitch(pitch_id):
     pitches = mongo.db.pitches
-    pitches.update( {'_id': ObjectId(pitch_id)},
-    {"$set": {
-        'is_del':True
-    }})
+    pitches.update({
+        '_id': ObjectId(pitch_id)}, {
+            "$set": {'is_del': True}})
     flash('Your pitch has been removed from further consideration!')
     return redirect(url_for('user_pitches'))
 
@@ -346,7 +373,7 @@ def hide_pitch(pitch_id):
 def delete_pitch():
     pitches = mongo.db.pitches
     pitches.remove({'is_del': True})
-    flash('Hey Admin, you have flushed out the deleted pitches!')
+    flash('You have flushed out the deleted pitches!')
     return redirect(url_for('all_pitches'))
 
 
@@ -365,7 +392,7 @@ def show_stats():
     else:
         return render_template('my404.html')
 
-""" PUT INTO SEPERATE FILE """
+
 @app.route("/get_data")
 def get_data():
     stat_data = []
@@ -374,8 +401,6 @@ def get_data():
         stat_data.append(data)
     stat_data = json.dumps(stat_data, default=json_util.default)
     return stat_data
-
-''''''
 
 
 if __name__ == '__main__':

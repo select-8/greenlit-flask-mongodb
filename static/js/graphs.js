@@ -55,12 +55,12 @@ function makeGraphs(error, pitchesData) {
         console.log(votes_person.top(Infinity))
 
         dc.barChart("#user-votes-chart")
-            .width(300)
-            .height(300)
+            .width(350)
+            .height(540)
             .margins({
-                top: 10,
+                top: 30,
                 right: 50,
-                bottom: 40,
+                bottom: 50,
                 left: 50
             })
             .dimension(user_dim)

@@ -46,8 +46,7 @@
 
             <div class="col-12 col-md-3">
                 <label>Choose a New Director?</label>
-                <select type="text" class="custom-select custom-select-lg mb-3 validate" id="director"
-                    name="director">
+                <select type="text" class="custom-select custom-select-lg mb-3 validate" id="director" name="director">
                     <option value="{{pitch.director_name}}" disabled selected>{{pitch.director_name}}</option>
                     {% for director in directors|sort(attribute='director') %}
                     {% if director.director == pitch.director_name %}
@@ -84,10 +83,12 @@
         </div> -->
 
         <div class="row justify-content-md-center title_head">
-                <div class="col-12 form-group">
-                    <input maxlength="399" type="text" class="validate form-control dt" id="description" name="description" value="{{pitch.description}}" rows="5"></input>
-                </div>
+            <div class="col-12 form-group">
+                <input maxlength="399" type="text" class="validate form-control dt" id="description" name="description"
+                    value="{{pitch.description}}"></input>
+
             </div>
+        </div>
 
 
         <div class="row justify-content-md-center">
@@ -150,4 +151,3 @@
 
 
 {% endblock %}
-

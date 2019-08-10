@@ -66,11 +66,11 @@
     {% for pitch in pitches %}
     <div class="pitch-collection borderimg">
         <div class="row banner">
-            <div class="col-1 clickers">
+            <div class="clickers">
                 <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}"
-                    class="btn info_button drop_down">Details</a>
+                    class="btn info_button drop_down"><i class="large material-icons dd-icon">arrow_drop_down</i></a>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <h3 class="title pitch-title-{{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">
                     {{ pitch.title|title }}</h3>
             </div>
@@ -103,11 +103,11 @@
                     {% endif %}
                 </form>
             </div>
-            <div class="col-1  text-center">
+            <div class="col-1 offset-md-1 text-center">
                 <p class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</p>
                 <p class="vote_text">Votes</p>
             </div>
-            <div class="col-1 remove_pitch">
+            <div class="col-2 remove_pitch">
                 <form action="{{ url_for('hide_pitch', pitch_id=pitch._id) }}" method="POST">
                     <button class="btn btn-default remove_button" type="submit">Remove</button>
                 </form>

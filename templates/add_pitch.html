@@ -43,7 +43,7 @@
 
             <div class="col-12 col-md-3">
                 <select class="custom-select custom-select-lg mb-3" id="actor" name="actor">
-                    <option value="" disabled selected>Choose Actor</option>
+                    <option value="Some Actor" selected>Choose Actor</option>
                     {% for actor in actors|sort(attribute='actor') %}
                     <option value="{{actor.actor}}">{{actor.actor}}</option>
                     {% endfor %}

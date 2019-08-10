@@ -62,19 +62,19 @@
 
     <div class="pitch-collection borderimg" id="thisPitch-{{ pitch._id }}">
         <div class="row banner">
-            <div class="col-1 clickers">
-                <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}"
-                    class="btn info_button drop_down">Details</a>
+            <div class="clickers">
+                <a href="#down-drop-{{ pitch._id }}" id="down-drop-{{ pitch._id }}" class="btn info_button drop_down"><i
+                        class="large material-icons">arrow_drop_down</i></a>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <h3 class="title pitch-title-{{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">
                     {{ pitch.title|title }}</h3>
             </div>
-            <div class="col-2 user_title">
+            <div class="col-2 offset-md-1 user_title">
                 <h5>Owner: {{ pitch.username|title }}</h5>
             </div>
             {% if session['username'] != 'admin' %}
-            <div class="col-1 vote_block">
+            <div class="col-1 offset-md-2 vote_block">
                 <form action=" {{ url_for('up_votes', pitch_id=pitch._id) }}" method="POST">
                     {% if session['username'] == pitch.username %}
                     <span class="vote_btn" tabindex="0" data-toggle="tooltip"
@@ -91,7 +91,7 @@
                 </form>
             </div>
             {% endif %}
-            <div class="col-1  text-center">
+            <div class="col-1 text-center">
                 <p class="lit-dot {{ 'greenlit' if pitch.is_greenlit == '1' else 'rejected' }}">{{ pitch.votes }}</p>
                 <p class="vote_text">Votes</p>
             </div>

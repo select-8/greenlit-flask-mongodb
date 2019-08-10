@@ -14,21 +14,12 @@
 </div>
 
 
-{% if users.username == sum_votes._id %}
-
-<p>{{users.username}}</p>
-<p>{{sum_votes._id}}</p>
-
-{% endif %}
-
-
-
-
+<p>{{sum_pitches}}</p>
 
 {% for user in users %}
 {% if user.username != 'admin' %}
 <div class="row">
-    <div class="col-3">{{ user.username }}</div>
+    <div class="col-3">{{ user.username|title }}</div>
 
     <div class="col-3">
         <form action="{{ url_for('delete_user', user_id=user._id) }}" method="POST">
