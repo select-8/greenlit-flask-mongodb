@@ -73,6 +73,7 @@ def register():
             _users.insert({
                 'username': request.form['username'], 'password': hashpass})
             session['username'] = request.form['username']
+            session['logged_in'] = True
             return redirect(url_for('index'))
         return 'That username already exists!'
     return render_template('register.html')
