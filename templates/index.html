@@ -9,55 +9,104 @@
 {% if count == 0 %}
 <p>Ready to add your first <a href="{{ url_for('add_pitch') }}">Pitch?</a></p>
 {% endif %}
-<br>
-
-{% else %}
-<div class="div">
-    <p>Register and become a member to add your own pitches, or <a href="{{ url_for('all_pitches') }}">browse current
-            pitches</a></p>
-</div>
 {% endif %}
 
 
-<h1>GREENLIT</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-12 home_banner text-center">
+            <h1>GREENLIT PRODUCTIONS</h1>
+        </div>
+    </div>
+</div>
 
-<h3>EXAMPLE PITCH</h3>
 
-<div class="container pitches_main">
+
+
+<div class="container pitches_main_home">
+    <div class="row home_page_text">
+        <div class="col-12 text-center everyone_text">
+            <h3>Everyone has brilliant story to tell.</h3>
+        </div>
+        <div class="col-12 home_text">
+            <ul>
+                <li>This site was designed to give you the oppertunity to pitch that story and if you are lucky, have it
+                    <span class="greenlit_heading">Greenlit</span>
+                    for production by us.</li>
+                <br>
+                <li>If you are not yet a member, feel free to browse current <a
+                        href="{{ url_for('all_pitches') }}">Pitches</a>.
+                    Then if you think you have what it takes, come back and <a
+                        href="{{ url_for('register') }}">Register</a>.</li>
+                <br>
+                <li>What can a member do?</li>
+
+                <li>Think of it as your two minutes in an elevator with one of our producers.</li>
+                <br>
+                <li>Frist, you will want to grab their attention by providing an awesome
+                    <strong><em>TITLE</em></strong>.</li>
+                <br>
+                <li>Next, what <strong><em>GENRE</em></strong> of movie is it? who do you see playing the
+                    <strong><em>LEAD</em></strong>?
+                    who do you want to <strong><em>DIRECT</em></strong>?</li>
+                <li>We have a roster of top Hollywood talent for you to choose from.</li>
+                <br>
+                <li>Of course you will need to give a short <strong><em>DESCRIPTION</em></strong> of the plot for you
+                    movie. Remember, your in an elevator,
+                    so keep it snappy!</li>
+                <br>
+                <li>Finally, and in the end we are going to have to sell your movie to audiences. To do this we need a
+                    <strong><em>TAGLINE</em></strong>.</li>
+                <br>
+                <li>You can add as many pitches as you like</li>
+                <li>If you are not successful on your first submission you will have three changes to make edits and
+                    resubmitt.</li>
+                <li>Once all your edits are gone you can get another chance to submitt if enough of our other members
+                    vote for it.</li>
+                <br>
+                <li>Check out an example of a greenlit pitch:</li>
+
+            </ul>
+        </div>
+    </div>
+
     <div class="pitch-collection borderimg" id="thisPitch">
         <div class="row banner">
-            <div class="col-6">
-                <h3>MY PITCHES TITLE</h3>
+            <div class="col-12 text-center">
+                <h3 class="title pitch-title-greenlit">SPACE FARM</h3>
             </div>
         </div>
         <div id="contentExample">
             <div class="row">
-                <div class="col-12 pitch-text">
-                    <p>
-                        a GENRE to be directed DIRECTOR and starring ACTOR
+                <div class="col-10 offset-1 pitch-text text-center">
+                    <p class="pitch_short">
+                        A <strong>Science Fiction</strong> film to be directed <strong>Sofia Coppola</strong> and
+                        starring <strong>Brad Pitt</strong>.
                     </p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 pitch-text">
-                    <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-                        mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
-                        quis enim. Donec pede justo!</p>
+                <div class="col-10 offset-1 pitch-text">
+                    <p class="pitch_desc"> The year is 2099, Brad Pitt plays an old farmer on the Moon. One winter his
+                        crops are devastated by a moon bug and
+                        his life starts to fall apart. That is until one fateful day, in the last cafe on the moon, he
+                        meets Sally and falls in love. But! Is all
+                        as it seems and what is Sally's connection to moon bugs!
+                    </p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 pitch-text">
-                    <p>Alien Meets Alien in Alien</p>
+                <div class="col-10 offset-1 pitch-text text-center">
+                    <p class="tag_text">The Field meets When Harry Met Sally in Space</p>
                 </div>
-                <div class="col-12">
-                    <img src="../static/images/alien.jpg"
+                <div class="col-10 offset-1 pitch-text pitch-img text-center">
+                    <img src="../static/images/thefield.jpg"
                         onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
                         height="100px">
-                    <img src="../static/images/alien.jpg"
+                    <img src="../static/images/whms.jpg"
                         onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
                         height="100px">
-                    <img src="../static/images/alien.jpg"
+                    <img src="../static/images/space.jpg"
                         onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" width="200px"
                         height="100px">
                 </div>
@@ -66,9 +115,4 @@
     </div>
 </div>
 
-<div class="container">
-    <p>Then you can edit X 3 and vote once for eveybody elses and submit and prey and remove</p>
-</div>
-
 {% endblock %}
-

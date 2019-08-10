@@ -40,6 +40,8 @@
             ] -%}
 
         <nav class="navbar navbar-light navbar-expand-md bg-light">
+
+            {% if session['username'] and session['username']|lower != 'admin'  %}
             <div class="d-flex">
                 <a class="nav_go_home mr-0" href="/">Greenlit Home</a>
                 <button class="navbar-toggler ml-1" type="button" data-toggle="collapse"
@@ -48,7 +50,6 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
-            {% if session['username'] and session['username']|lower != 'admin'  %}
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
                 {% for link, id, text in navbar_in[:2] %}
                 <ul class="navbar-nav ml-4">
@@ -58,7 +59,7 @@
                 {%  endfor %}
             </div>
             <div class="nav navbar-brand">
-                    <span>{{ session['username']|upper }}</span>
+                <span>{{ session['username']|upper }}</span>
             </div>
             <div class="nav navbar-nav order-md-last">
                 {% for link, id, text in navbar_in[-1:] %}
@@ -68,9 +69,15 @@
                 </ul>
                 {% endfor %}
             </div>
-
-
             {% elif session['username']|lower == 'admin'  %}
+            <div class="d-flex">
+                <a class="nav_go_home mr-0" href="/">Greenlit Home</a>
+                <button class="navbar-toggler ml-1" type="button" data-toggle="collapse"
+                    data-target="#collapse-this-navbar" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
                 {% for link, id, text in navbar_admin[:3] %}
                 <ul class="navbar-nav ml-4">
@@ -80,7 +87,7 @@
                 {%  endfor %}
             </div>
             <div class="nav navbar-brand">
-                    <span>{{ session['username']|upper }}</span>
+                <span>{{ session['username']|upper }}</span>
             </div>
             <div class="nav navbar-nav order-md-last">
                 {% for link, id, text in navbar_admin[-1:] %}
@@ -91,6 +98,9 @@
                 {% endfor %}
             </div>
             {% else %}
+            <div class="d-flex">
+                <a class="nav_go_home mr-0" href="/">Greenlit Home</a>
+            </div>
             <div class="navbar-collapse collapse" id="collapse-this-navbar">
                 {% for link, id, text in navbar_out[:1] %}
                 <ul class="navbar-nav ml-4">

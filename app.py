@@ -77,9 +77,8 @@ def register():
 @app.route('/logout')
 def logout():
    session.clear()
-   return redirect(url_for('login'))
+   return redirect(url_for('index'))
 
-''''''
 
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
@@ -122,8 +121,11 @@ def user_pitches(sort_field):
 def all_pitches(sort_field):
     username = session.get('username')
     genre_filter = request.args.get('genre_name')
+    status_filter = request.args.get('is_greenlit')
     if genre_filter:
         pitches = _pitches.find({'genre_name': genre_filter, 'username': {'$ne': username} }).sort(sort_field, pymongo.DESCENDING)
+    elif status_filter:
+        pitches = _pitches.find({'is_greenlit': status_filter, 'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
     else:
         pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
 
@@ -142,31 +144,13 @@ def all_pitches(sort_field):
                             votes=votes,
                             genres=genres,
                             count=count,
-                            genre_filter=genre_filter)
+                            statuses=status)
 
 
 @app.route('/test')
 def test():
     print(request.args.get('age'))
     return render_template('test.html')
-
-
-@app.route('/all_but', defaults={'sort_field': 'last_modified'})
-@app.route('/all_but/<sort_field>')
-def all_but(sort_field):
-    username = session.get('username')
-    not_pitches = _pitches.find({'username': {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
-    votes = _votes.find_one()
-    genres = _genres.find()
-    status = mongo.db.status.find()
-    if session.get('logged_in') == True:
-        return render_template("all_but_pitches.html",
-                            pitches=not_pitches,
-                            tags=tags,
-                            votes=votes,
-                            genres=genres)
-    else:
-        return redirect(url_for('all_pitches'))
 
 
 @app.route('/show_users')
@@ -180,10 +164,13 @@ def show_users():
         ])
     pitches = _pitches.find()
     users = usercoll.find()
-    return render_template("show_users.html",
-                            users=users,
-                            pitches=pitches,
-                            sum_votes=sum_votes)
+    if session.get('logged_in') == True:
+        return render_template("show_users.html",
+                                users=users,
+                                pitches=pitches,
+                                sum_votes=sum_votes)
+    else:
+        return render_template('my404.html')
 
 
 @app.route('/add_pitch')
@@ -373,7 +360,10 @@ def delete_user(user_id):
 
 @app.route("/show_stats")
 def show_stats():
-    return render_template("show_stats.html")
+    if session.get('username') == 'admin':
+        return render_template("show_stats.html")
+    else:
+        return render_template('my404.html')
 
 """ PUT INTO SEPERATE FILE """
 @app.route("/get_data")

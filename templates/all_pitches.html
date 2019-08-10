@@ -9,28 +9,30 @@
 
 <div class="container all_pitches_container">
     <div class="row">
-        <div class="col-1">
-            <p>Filter by Genre:</p>
-        </div>
-        <div class="col-4 genre_dd">
+        <div class="col-2 genre_dd">
             <form id="genre_form" action="{{ url_for('all_pitches') }}">
                 <select onchange="this.form.submit()" name="genre_name" id="genre_name"
-                    class="custom-select custom-select-md mb-3">
+                    class="custom-select custom-select-sm mb-3">
 
-                    <option value="Filter by genre" disabled selected>{{ genre_filter|title }}</option>
+                    <!-- <option value="Filter by genre" disabled selected>{{ genre_filter|title }}</option> -->
 
-                    <!-- <option value="Filter by genre" disabled selected>Filter by genre</option> -->
+                    <option value="Filter by genre" disabled selected>Filter by genre</option>
 
                     {% for genre in genres %}
                     <option value="{{ genre.genre_name }}">{{ genre.genre_name|title }}</option>
                     {% endfor %}
+
+
                 </select>
+
             </form>
         </div>
-        <div class="col-2 offset-md-1">
-            <button class="btn btn-outline-primary"><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by
+
+        <div class="col-2 offset-md-3">
+            <button class="btn btn-link"><a href="{{ url_for('all_pitches', sort_field='votes') }}">Sort by
                     votes</a></button>
         </div>
+
         {% if session['username'] and session['username']|lower == 'admin' %}
         <div class="col-4">
             <form action="{{ url_for('delete_pitch') }}" method="POST">

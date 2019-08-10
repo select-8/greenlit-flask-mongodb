@@ -83,6 +83,7 @@ hr {
 .choices {
   padding-bottom: 10px;
 }
+
 .dt {
   padding: 5px 5px;
   box-sizing: border-box;
@@ -91,7 +92,7 @@ hr {
   background-color: #f8f8f8;
   font-size: 1.5rem;
   color: #717171;
-} 
+}
 
 .title_box {
   padding: 5px 5px;
@@ -264,4 +265,46 @@ hr {
 
 .pitch_desc {
   text-align: left;
+}
+
+/* ---------------------------------------------------------*/
+/* -------------------------------- HOME PAGE --------------*/
+/* ---------------------------------------------------------*/
+
+.home_text ul {
+  list-style: none;
+  padding: 0;
+}
+
+.greenlit_heading {
+  color: green;
+  font-weight: bolder;
+}
+
+.home_page_text {
+  border: solid 1.5px black;
+
+}
+
+.home_page_text h3 {
+  padding: 0;
+  margin: 0
+}
+
+.home_banner {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1rem;
+
+}
+
+.everyone_text h3 {
+  margin: 10px;
+}
+
+.pitches_main_home {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 0;
+  background-color: #f8f9fa;
 }
