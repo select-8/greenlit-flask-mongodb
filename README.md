@@ -326,7 +326,7 @@ The site can be cloned from GitHub and ran locally by following the following st
     - flask run
     - open the app at http://127.0.0.1:5000/
 
-However, you will not have access to the data. To got this you will need to create your own mongo instance and upload the dump files located [here]('static/assets/greenlit') 
+However, you will not have access to the data. To got this you will need to create your own mongo instance and upload the dump files located [here](static/assets/greenlit) 
 To do this you can used the mongoimport command:
             
     mongoimport --db <dbname> --collection <collection_name>
