@@ -130,7 +130,7 @@ def user_pitches(sort_field):
 
 '''
 Query Parameters should be used to filter data.
-Data for the current user should not be returned.
+Data for the current user and is_del: True should not be returned.
 '''
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/all_pitches/<sort_field>')
@@ -140,17 +140,17 @@ def all_pitches(sort_field):
     status_filter = request.args.get('is_greenlit')
     if genre_filter:
         pitches = _pitches.find(
-            {'genre_name': genre_filter, 'username': {
+            {'is_del': False,'genre_name': genre_filter, 'username': {
                 '$ne': username}}).sort(sort_field, pymongo.DESCENDING)
     elif status_filter:
         pitches = _pitches.find(
-            {'is_greenlit': status_filter, 'username': {
+            {'is_del': False,'is_greenlit': status_filter, 'username': {
                 '$ne': username}}).sort(sort_field, pymongo.DESCENDING)
     else:
         pitches = _pitches.find(
-            {'username':
+            {'is_del': False,'username':
                 {'$ne': username}}).sort(sort_field, pymongo.DESCENDING)
-
+    
     count = pitches.count()
     if count == 0 and username != 'admin':
         flash("Currently no entries exist under that genre,\

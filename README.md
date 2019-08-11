@@ -23,6 +23,8 @@ Three types of users:
 
 ### Data Model
 
+
+
 ### UX
 #### Wireframe
 
@@ -83,19 +85,37 @@ Multiple Query Parameters
 
 ## Testing
 
-Manual
+Manual Testing through development of the site consisted of asking the following questions each time a significnat feature was added, removed or changed. 
 
-	- if no pitches exist in collection what happens?
+What happens:
+
+	- if no pitches exist in collection?
 		- for non logged in
 		- for logged in
 			- in own ps
 			- in all ps
 		- for admin	
-	- If not pitches in collection, all_ps displays no genre of that type message
-	- if user does not use sentence case on text input, what happens?
+	- if user does not use correct case on text input?
 		- in edit
 		- in view
-    - if user maually enters url endpoints
+    - if user maually enters url endpoints?
+        - non logged in 
+        - logged in
+        - admin
+        - do the messaging/redirects make sense, can they get home and start again?
+    - if a pitch is removed (is_del == True)
+        - to any app function which requires a count of documents?
+    - when viewed, if user does not select from options on add/edit
+        - to text
+        - to storyboard
+    - when users click links, are they ever confused about where they are, do they have further options, can they always get home
+        - logged in
+        - not logged in
+        - admin
+        - after initial register
+        - after logging out
+
+        
 
 ##### Users
 
@@ -124,6 +144,8 @@ JavaScript files were tested at : https://jshint.com/
 ## Deployment
 
 The site is deployed to GitHub Pages under the following process:
+
+### How to clone locally
 
 
 ## Technologies Used
