@@ -81,7 +81,7 @@ This is small collection used for the filter by status function
 
 #### Pitches
 Pitches collection documents are inserted on adding a pitch and updated on editing a pitch, voting for a pitch, submitting a pitch and removing a pitch. They contain all the data displayed in the pitch drop downs.
-On insert, tag storyboard data (tag_img1 etc) is automatically inserted to choose the corresponding images from the [images directory]('static/images/).
+On insert, tag storyboard data (tag_img1 etc) is automatically inserted to choose the corresponding images from the [images directory](static/images/).
 
 #### Votes
 On clicking the vote button, If a pitch is not already in the votes collection, a new document with the pitches _id and an array is added to this collection, the current user's username will be the first item in the array. The vote field of the pitch
@@ -156,6 +156,14 @@ They can up vote and remove their vote.
 ##### Submit
 
 Users can submit if they have less than 3 edits made or if they have more than 5 votes.
+Conveniently, in order for this to be tested I have a pitch with 3 edits and 4 votes ready. To test:
+- log in as user: mary, password: mary
+- look for the pitch titled: 'Mary The Return' 
+- it has no edits left, the submit button is deactivated and it has four votes
+- log out and in as your own user
+- vote for 'Mary The Return' 
+- log back in as mary and the submit button should be activated 
+
 In the time I had I was not able to make it so a user would have one submit on initially creating a pitch and would then have to make a edit before being able to resubmit. This will need to left to the next phase of development.
 
 ##### Remove / Delete
