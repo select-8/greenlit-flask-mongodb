@@ -1,0 +1,11 @@
+{"_id":{"$oid":"5d381e29d6050d495e0e0a53"},"genre_name":"Science Fiction"}
+{"_id":{"$oid":"5d381e2ad6050d495e0e0a54"},"genre_name":"Horror"}
+{"_id":{"$oid":"5d381e2ad6050d495e0e0a55"},"genre_name":"Romantic Comedy"}
+{"_id":{"$oid":"5d40672f1c9d440000939fdb"},"genre_name":"drama"}
+{"_id":{"$oid":"5d40673d1c9d440000939fdc"},"genre_name":"thriller"}
+{"_id":{"$oid":"5d4067981c9d440000939fdd"},"genre_name":"Romance"}
+{"_id":{"$oid":"5d4067aa1c9d440000939fde"},"genre_name":"Comedy"}
+{"_id":{"$oid":"5d40682b1c9d440000939fdf"},"genre_name":"Crime"}
+{"_id":{"$oid":"5d4068601c9d440000939fe0"},"genre_name":"Fantasy"}
+{"_id":{"$oid":"5d4068e31c9d440000939fe1"},"genre_name":"Adventure"}
+{"_id":{"$oid":"5d4068ec1c9d440000939fe2"},"genre_name":"action"}

@@ -49,8 +49,6 @@ hr {
   border-image-slice: 300;
   background-color: rgba(0, 0, 0, .75);
   color: #fafafa;
-  /* margin-top: 50px;
-  margin-bottom: 50px; */
 }
 
 .panel {
@@ -322,6 +320,9 @@ hr {
   background-color: #f8f9fa;
 }
 
+/* ---------------------------------------------------------*/
+/* -------------------------------- STATS --------------*/
+/* ---------------------------------------------------------*/
 .stats {
   margin-top: 50px;
 }

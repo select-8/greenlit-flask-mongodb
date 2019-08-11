@@ -1,0 +1,13 @@
+{"_id":{"$oid":"5d3821610db207b28a5300de"},"actor":"Brad Pitt","gender":"m"}
+{"_id":{"$oid":"5d3821620db207b28a5300df"},"actor":"Steve Buscemi","gender":"m"}
+{"_id":{"$oid":"5d3821620db207b28a5300e0"},"actor":"Gwyneth Paltrow","gender":"f"}
+{"_id":{"$oid":"5d40763d1c9d440000939fe3"},"actor":"Natalie Portman","gender":"f"}
+{"_id":{"$oid":"5d4076a01c9d440000939fe4"},"actor":"Jennifer Lawrence","gender":"f"}
+{"_id":{"$oid":"5d4077141c9d440000939fe5"},"actor":"Chiwetel Ejiofor","gender":"m"}
+{"_id":{"$oid":"5d40775b1c9d440000939fe6"},"actor":"Dwayne \"The Rock\" Johnson","gender":"m"}
+{"_id":{"$oid":"5d4077b21c9d440000939fe7"},"actor":"Matt Damon","gender":"m"}
+{"_id":{"$oid":"5d4077bb1c9d440000939fe8"},"actor":"Julianne Moore","gender":"f"}
+{"_id":{"$oid":"5d4077d11c9d440000939fe9"},"actor":"Tilda Swinton","gender":"f"}
+{"_id":{"$oid":"5d4077e81c9d440000939fea"},"actor":"Christian Bale","gender":"m"}
+{"_id":{"$oid":"5d4077fb1c9d440000939feb"},"actor":"Diane Keaton","gender":"f"}
+{"_id":{"$oid":"5d41ec001c9d440000c3b7dd"},"actor":"Spike Jones","gender":"m"}

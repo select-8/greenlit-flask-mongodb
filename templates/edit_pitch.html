@@ -4,7 +4,6 @@
 
 <div class="row banner_text">
     <div class="col-12 text-center edit_intro">
-        <!-- <h3>Welcome {{ session['username']|title }}.</h3> -->
         <h5>Use the form below to update your pitch.</h5>
         <h5>Return to <em><a href="{{ url_for('user_pitches') }}">My Pitches</a></em> in order to resubmit!</h5>
 
@@ -15,19 +14,12 @@
 
 <div class="container">
     <form action="{{ url_for('update_pitch', pitch_id=pitch._id) }}" method="POST">
-
-        <!-- <div class=" input-field input-title">
-        <p>Change the Title</p>
-        <input id="title" name="title" type="text" class="validate" value="{{pitch.title}}">
-    </div> -->
-
         <div class="row justify-content-md-center title_head">
             <div class="col-12 col-md-6 form-group">
                 <input class="form-control dt" id="title" name="title" value="{{pitch.title}}" rows="3"></input>
             </div>
         </div>
-
-
+        {# dropdowns #}
         <div class="row justify-content-md-center">
             <div class="col-12 col-md-3">
                 <label>Select a Different Genre?</label>
@@ -74,14 +66,6 @@
 
         </div>
 
-
-        <!-- <div class="row justify-content-md-center">
-            <div class="col-12 col-md-10 form-group">
-                <label>Alter your movie's description:</label>
-                <input id="description" name="description" type="text" class="validate form-control" value="{{pitch.description}}"></input>
-            </div>
-        </div> -->
-
         <div class="row justify-content-md-center title_head">
             <div class="col-12 form-group">
                 <input maxlength="399" type="text" class="validate form-control dt" id="description" name="description"
@@ -98,9 +82,8 @@
             </div>
         </div>
         <div class="row justify-content-md-center">
-            <!-- <div class="input-field" style="width:200px;"> -->
             <div class="col-6 col-md-3">
-                <select id="tag1" name="tag1" type="text" class="custom-select validate" size="10">
+                <select id="tag1" name="tag1" type="text" class="custom-select validate" size="11">
                     <option value="{{pitch.tag.film1}}" disabled selected><i>{{pitch.tag.film1}}</i></option>
                     {% for tag in tag_titles %}
                     {% if tag.title == pitch.tag.film1 %}
@@ -113,7 +96,7 @@
             </div>
 
             <div class="col-6 col-md-3">
-                <select id="tag2" name="tag2" type="text" class="custom-select validate" size="10">
+                <select id="tag2" name="tag2" type="text" class="custom-select validate" size="11">
                     <option value="{{pitch.tag.film1}}" disabled selected><i>{{pitch.tag.film2}}</i></option>
                     {% for tag in tag_titles %}
                     {% if tag.title == pitch.tag.film2 %}
@@ -126,7 +109,7 @@
             </div>
 
             <div class="col-12 col-md-3 input-field">
-                <select id="location" name="location" type="text" class="custom-select validate" size="10">
+                <select id="location" name="location" type="text" class="custom-select validate" size="11">
                     <option value="{{pitch.tag.location}}" disabled selected>{{pitch.tag.location}}</option>
                     {% for tag in tag_locations %}
                     {% if tag.title == pitch.tag.location %}

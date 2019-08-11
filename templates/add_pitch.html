@@ -13,26 +13,26 @@
 </div>
 
 <div class="container">
-    <form action="{{ url_for('insert_pitch') }}" method="POST" novalidate>
+    <form action="{{ url_for('insert_pitch') }}" method="POST">
         <div class="row justify-content-md-center">
             <div class="col-12 col-md-6 form-group">
                 <textarea class="form-control title_box" id="title" name="title" placeholder="Give your film a title" rows="2"
-                    cols="2" required></textarea>
+                    cols="2" ></textarea>
             </div>
         </div>
 
         <div class="row justify-content-md-center">
             <div class="col-12 col-md-3">
-                <select class="custom-select custom-select-lg mb-3" id="genre" name="genre_name">
-                    <option value="" disabled selected>Choose Genre</option>
+                <select class="custom-select custom-select-lg mb-3" id="genre_name" name="genre_name">
+                    <option value="Choose Genre" disabled selected>Choose Genre</option>
                     {% for genre in genres|sort(attribute='genre_name') %}
-                    <option value="{{genre.genre_name}}" required>{{genre.genre_name|title}}</option>
+                    <option value="{{genre.genre_name}}" >{{genre.genre_name|title}}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="col-12 col-md-3">
-                <select class="custom-select custom-select-lg mb-3" id="director" name="director_name">
+                <select class="custom-select custom-select-lg mb-3" id="director_name" name="director_name">
                     <option value="(User couldn't be bothered picking a director, this will not pass!!!)" selected>
                         Choose Director</option>
                     {% for director in directors|sort(attribute='director') %}

@@ -9,6 +9,7 @@ function makeGraphs(error, pitchesData) {
         d.votes = parseInt(d.votes);
     });
 
+    //Functions are declared 
     show_users(ndx);
     show_votes_per_user(ndx);
     show_genres_pie(ndx);
@@ -26,6 +27,10 @@ function makeGraphs(error, pitchesData) {
         };
     }
 
+
+    //
+    // Users Row Chart
+    //
     function show_users(ndx) {
         let user_dim = ndx.dimension(dc.pluck('username'));
         let user_group = user_dim.group();
@@ -52,7 +57,6 @@ function makeGraphs(error, pitchesData) {
     function show_votes_per_user(ndx) {
         let user_dim = ndx.dimension(dc.pluck('username'));
         var votes_person = user_dim.group().reduceSum(dc.pluck('votes'));
-        console.log(votes_person.top(Infinity))
 
         dc.barChart("#user-votes-chart")
             .width(350)

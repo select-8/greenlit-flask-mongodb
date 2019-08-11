@@ -1,0 +1,56 @@
+{
+  "_id": {
+    "$oid": "5d3821023cde775308627315"
+  },
+  "director": "Martin Scorsese"
+} {
+  "_id": {
+    "$oid": "5d3821033cde775308627316"
+  },
+  "director": "Steven Spielberg"
+} {
+  "_id": {
+    "$oid": "5d3821033cde775308627317"
+  },
+  "director": "Kathryn Bigelow"
+} {
+  "_id": {
+    "$oid": "5d4065ad1c9d440000939fd4"
+  },
+  "director": "P.T Anderson"
+} {
+  "_id": {
+    "$oid": "5d4066131c9d440000939fd5"
+  },
+  "director": "Coen Brothers"
+} {
+  "_id": {
+    "$oid": "5d4066421c9d440000939fd6"
+  },
+  "director": "Lynne Ramsay"
+} {
+  "_id": {
+    "$oid": "5d4066791c9d440000939fd7"
+  },
+  "director": "Wong Kar-wai"
+} {
+  "_id": {
+    "$oid": "5d4066ad1c9d440000939fd8"
+  },
+  "director": "Richard Linklater"
+} {
+  "_id": {
+    "$oid": "5d4066bd1c9d440000939fd9"
+  },
+  "director": "David O Russell"
+} {
+  "_id": {
+    "$oid": "5d4066d41c9d440000939fda"
+  },
+  "director": "Sofia Coppola"
+} {
+  "_id": {
+    "$oid": "5d41ebf01c9d440000c3b7dc"
+  },
+  "director": "Spike Jones"
+}
