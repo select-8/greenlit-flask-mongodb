@@ -431,7 +431,7 @@ def show_stats():
         return render_template('my404.html')
 
 '''
-Dump pitches collect to json,
+Dump pitches collection to json,
 make available at route for D3 to ingest
 '''
 @app.route("/get_data")

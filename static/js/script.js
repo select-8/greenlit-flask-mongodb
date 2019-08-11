@@ -1,5 +1,6 @@
 $(document).ready(function () {
-
+// unique id is made for contant divs and dropdown buttons in Jinja Loop
+// (given type) + <ObjectId>
     function togglePitchDiv() {
         $('.drop_down').click(function () {
             var currentId = $(this).attr("id");
