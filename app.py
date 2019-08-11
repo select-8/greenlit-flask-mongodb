@@ -22,11 +22,15 @@ _users = mongo.db.users
 users = _users.find()
 _pitches = mongo.db.pitches
 _genres = mongo.db.genres
+genres = _genres.find()
 _directors = mongo.db.directors
+directors = _directors.find()
 _actors = mongo.db.talent
-_tags = mongo.db.tags
-tags = _tags.find()
+actors = _actors.find()
 _votes = mongo.db.votes
+status = mongo.db.status.find()
+_tags = mongo.db.tags
+tags = mongo.db.tags.find()
 
 created_at = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 last_modified = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
@@ -84,7 +88,11 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
+'''
+Show current user's pitches only.
+When 'remove' button is selected is_del is set to True,
+only show pitches where is_del is False
+'''
 @app.route('/user_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/user_pitches/<sort_field>')
 def user_pitches(sort_field):
@@ -120,7 +128,10 @@ def user_pitches(sort_field):
     else:
         return redirect(url_for('all_pitches'))
 
-
+'''
+Query Parameters should be used to filter data.
+Data for the current user should not be returned.
+'''
 @app.route('/all_pitches', defaults={'sort_field': 'last_modified'})
 @app.route('/all_pitches/<sort_field>')
 def all_pitches(sort_field):
@@ -158,7 +169,11 @@ def all_pitches(sort_field):
                            count=count,
                            statuses=status)
 
-
+'''
+Only admin user can access users page.
+Aggregate query is not currently used,
+is present for potential future use.
+'''
 @app.route('/show_users')
 def show_users():
     usercoll = mongo.db.users
@@ -170,7 +185,7 @@ def show_users():
         ])
     pitches = _pitches.find()
     users = usercoll.find()
-    if session.get('logged_in'):
+    if session.get('logged_in') and username == 'admin':
         return render_template("show_users.html",
                                users=users,
                                pitches=pitches,
@@ -182,11 +197,11 @@ def show_users():
 @app.route('/add_pitch')
 def add_pitch():
     _genres = mongo.db.genres.find()
-    genre_list = [genre for genre in _genres]
+    genre_list = [genre for genre in genres]
     _directors = mongo.db.directors.find()
-    director_list = [directors for directors in _directors]
+    director_list = [directors for directors in directors]
     _actors = mongo.db.talent.find()
-    actor_list = [actors for actors in _actors]
+    actor_list = [actors for actors in actors]
     _tag_titles = mongo.db.tags.find({"type": "title"}, {"title": 1})
     tag_titles_list = [title for title in _tag_titles]
     _tag_locations = mongo.db.tags.find({"type": "loc"}, {"location": 1})
@@ -201,31 +216,31 @@ def add_pitch():
     else:
         return render_template('my404.html')
 
-
+'''
+Validate the presence of specified fields server side,
+flash message if not present, 
+otherwise update data in collection.
+'''
 @app.route('/insert_pitch', methods=['POST'])
 def insert_pitch():
-    usercoll = mongo.db.users
     username = session.get('username')
-    the_user = usercoll.find_one({'username': username})
-    tags = mongo.db.tags
-    pitch = mongo.db.pitches
+    the_user = _users.find_one({'username': username})
     title = request.form.get('title')
     genre_name = request.form.get('genre_name')
-    print(genre_name)
     director_name = request.form.get('director_name')
     actor_name = request.form.get('actor')
     description = request.form.get('discription')
     tag_film1 = request.form.get('film_1')
     tag_film2 = request.form.get('film_2')
     tag_location = request.form.get('location')
-    tag_img1 = tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
-    tag_img2 = tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
-    loc_img = tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
+    tag_img1 = _tags.find_one({'title': tag_film1}, {"img": 1, "_id": 0})
+    tag_img2 = _tags.find_one({'title': tag_film2}, {"img": 1, "_id": 0})
+    loc_img = _tags.find_one({'location': tag_location}, {"img": 1, "_id": 0})
     if genre_name is None or title == '':
         flash("Come on lazy, you'll never make it in the biz with that attitude.\
         Give your pitch a title and genre at least!!!")
     else:
-        pitch.insert_one({
+        _pitches.insert_one({
             'username': the_user['username'], 'created_at': created_at,
             'last_modified': last_modified, 'title': title,
             'genre_name': genre_name, 'director_name': director_name,
@@ -265,7 +280,10 @@ def edit_pitch(pitch_id):
                            tag_titles=tag_titles_list,
                            tag_locations=tag_locations_list)
 
-
+'''
+Get data from form and update pitch at pitch_id.
+Increment num_edits by 1.
+'''
 @app.route('/update_pitch/<pitch_id>', methods=["POST"])
 def update_pitch(pitch_id):
     pitches = mongo.db.pitches
@@ -295,7 +313,11 @@ def update_pitch(pitch_id):
     pitches.update({'_id': ObjectId(pitch_id)}, {"$inc": {'num_edit': 1}})
     return redirect(url_for('user_pitches'))
 
-
+'''
+Randomise the value of is_greenlit unless 
+specific actor/director combinations are found (set 0).
+If a pitch has 5 or more votes, always set to 1.
+'''
 @app.route('/is_greenlit/<pitch_id>', methods=["GET", "POST"])
 def is_greenlit(pitch_id):
     random_is_greenlit = str(randint(0, 1))
@@ -330,7 +352,18 @@ def is_greenlit(pitch_id):
                         flash("how did you do?")
     return redirect(url_for('user_pitches'))
 
-
+'''
+If a pitch is not already in the votes collection, insert a new document 
+with the pitches _id and an array, the current user's username 
+will be the first item in the array. Increment the vote field of the pitch
+in the pitches collection by 1.
+If the pitch's _id is in the votes collection and the current user is in the array,
+pull that voter from the array and deincrement the vote field of the pitch
+in the pitches collection by 1.
+Otherwise, if the pitch's _id is in the votes collection and 
+the current user is NOT in the array, push the current user to the array and
+increment the vote field of the pitch in the pitches collection by 1.
+'''
 @app.route('/up_votes/<pitch_id>', methods=["POST", "GET"])
 def up_votes(pitch_id):
     current_user = session.get('username')
@@ -359,7 +392,9 @@ def up_votes(pitch_id):
     flash('Please log in or register to vote')
     return redirect(url_for('all_pitches'))
 
-
+'''
+If a user selects to remove a pitch, set is_del to true
+'''
 @app.route('/hide_pitch/<pitch_id>', methods=["POST"])
 def hide_pitch(pitch_id):
     pitches = mongo.db.pitches
@@ -369,7 +404,9 @@ def hide_pitch(pitch_id):
     flash('Your pitch has been removed from further consideration!')
     return redirect(url_for('user_pitches'))
 
-
+'''
+Delete from collection where is_del is true
+'''
 @app.route('/delete_pitch', methods=["POST"])
 def delete_pitch():
     pitches = mongo.db.pitches
@@ -393,7 +430,10 @@ def show_stats():
     else:
         return render_template('my404.html')
 
-
+'''
+Dump pitches collect to json,
+make available at route for D3 to ingest
+'''
 @app.route("/get_data")
 def get_data():
     stat_data = []
